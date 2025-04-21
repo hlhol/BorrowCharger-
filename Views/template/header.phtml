@@ -1,3 +1,5 @@
+session_start();
+
 <!DOCTYPE html>
 <html lang="en">
     
@@ -11,15 +13,36 @@
     </head>
     
     <body>
-        <h1>header</h1>
+        <h1><?php echo $view->pageTitle; ?></h1>
         <div class="continer">
-        
-            <div id="menu" class="col-xs-6 col-sm-3 col-md-2">
-                <ul class="nav navbar_default nav-stacked">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="login.php">Login</a></li>
-                    <li><a href="signUp.php">Sign UP</a></li>
-                </ul>
+
+               
+            <div id="menu">
+                <?php if (!isset($_SESSION['login'])): ?>
+                    <ul >
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="login.php">Login</a></li>
+                        <li><a href="signUp.php">Sign UP</a></li>
+                    </ul>
+                <?php elseif ( $_SESSION['user_role'] === 'user'): ?>
+                    <ul >
+                        <li><a href="DashBoard.php">DashBoard</a></li>
+                        <li><a href="Booking.php">Book charger</a></li>
+                        <li><a href="Profile.php">Profile</a></li>
+                    </ul>
+                <?php elseif ( $_SESSION['user_role'] === 'Admin'): ?>
+                     <ul >
+                        <li><a href="DashBoard.php">DashBoard</a></li>
+                        <li><a href="MangementAC.php">Mange charger point</a></li>
+                        <li><a href="MangementAU.php">Mange Uses</a></li>
+                    </ul>
+                <?php elseif ( $_SESSION['user_role'] === 'Homeowner'): ?>
+                    <ul >
+                        <li><a href="DashBoard.php">DashBoard</a></li>
+                        <li><a href="MangementH.php">Mange charger point</a></li>
+                        <li><a href="Profile.php">Profile</a></li>
+                    </ul>
+                <?php endif ?>
             </div>
         
         </div>
