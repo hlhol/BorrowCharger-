@@ -10,6 +10,9 @@
       <div class="text-center mb-5">
         <div class="feature d-flex align-items-center justify-content-center bg-primary bg-gradient text-white mb-3"><i class="bi bi-box-arrow-in-right fs-1"></i></div>
         <h2 class="fw-bolder">Sign Up:</h2>
+        <?php if (!empty($view->message)) : ?>
+        <div class="alert alert-info text-center mt-3"><?= htmlspecialchars($view->message) ?></div>
+     <?php endif; ?>
         <p class="lead fw-normal text-muted mb-0">Create your account</p>
       </div>
       <div class="row gx-5 justify-content-center">
@@ -17,10 +20,15 @@
     <form id="signUp" action=""<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
         
         <div class="form-floating mb-3">
-              <input class="form-control" id="username" name="username" type="text" placeholder="Enter your First name..." data-sb-validations="required" />
+              <input class="form-control" id="username" name="username" type="text" placeholder="Enter your  username..." data-sb-validations="required" />
               <label for="name">Username:</label>
               <div class="invalid-feedback" data-sb-feedback="username:required">A username is required.</div>
-            </div>
+        </div>
+        
+        <div class="form-floating mb-3">
+            <input class="form-control" id="name" name="name" type="text" placeholder="Enter your First name..." />
+            <label for="name">Name:</label>
+        </div>
     
    <div class="form-floating mb-3">
               <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
@@ -36,24 +44,12 @@
     <div class="form-floating mb-3">
       <select class="form-select" id="role" name="role" required>
             <option value="">--Select Role--</option>
-            <option value="homeowner">Homeowner</option>
-            <option value="user">User</option>
+            <option value="Homeowner">Homeowner</option>
+            <option value="User">User</option>
       </select>
         <label for="role">Role</label>
       <div class="invalid-feedback" data-sb-feedback="role:required">Please select a role.</div>
     </div>
-    
-     <div class="form-floating mb-3">
-              <input class="form-control" id="firstname" name="firstname" type="text" placeholder="Enter your First name..." data-sb-validations="required" />
-              <label for="name">First Name:</label>
-              <div class="invalid-feedback" data-sb-feedback="firstname:required">A name is required.</div>
-            </div>
-    
-    <div class="form-floating mb-3">
-              <input class="form-control" id="lastname" name="lastname" type="text" placeholder="Enter your Last Name..." data-sb-validations="required" />
-              <label for="name">Last Name:</label>
-              <div class="invalid-feedback" data-sb-feedback="lastname:required">A name is required.</div>
-            </div>
     <div class="d-grid mb-3">
         <button type="submit"type="submit" name="submit" class="btn btn-primary btn-lg">Sign Up</button><br>
     </div>
@@ -66,6 +62,7 @@
     </div>
     </div>
     </div>
+    
 </section>
 
 <?php require('template/footer.phtml') ?>

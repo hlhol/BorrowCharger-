@@ -1,12 +1,10 @@
 <?php
-
 session_start();
-
 $view = new stdClass();
 $view->pageTitle = 'Dahsboard';
 
 if (isset($_SESSION['user_role'])) {
-    if ($_SESSION['user_role'] === 'user') {
+    if ($_SESSION['user_role'] === 'User') {
         
         require_once('Views/RentalUser/DashBoardR.phtml');
     } elseif ($_SESSION['user_role'] === 'Homeowner') {
