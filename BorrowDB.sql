@@ -79,3 +79,15 @@ CREATE TABLE IF NOT EXISTS Messages (
     FOREIGN KEY (receiver_id) REFERENCES Users(user_id),
     FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
 );
+
+
+-- Insert Admin user
+INSERT INTO Users (username, fname, password, role, status, email)
+VALUES (
+    'admin@admin.com',
+    'User Lee Griffiths',
+    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEaN1/u/8SO5lEHG2uPaOeGJ5xCy',
+    'Admin',
+    'Active',
+    'admin@admin.com'
+);
