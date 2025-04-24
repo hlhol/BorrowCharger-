@@ -42,11 +42,11 @@
               <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
             <?php elseif ($_SESSION['user_role'] === 'Admin'): ?>
               <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
-              <li class="nav-item"><a class="nav-link" href="MangementAC.php">Manage Chargers</a></li>
-              <li class="nav-item"><a class="nav-link" href="MangementAU.php">Manage Users</a></li>
+              <li class="nav-item"><a class="nav-link" href="MangementA.php">Manage Chargers</a></li>
+              <li class="nav-item"><a class="nav-link" href="MangementA.php">Manage Users</a></li>
             <?php elseif ($_SESSION['user_role'] === 'Homeowner'): ?>
               <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
-              <li class="nav-item"><a class="nav-link" href="MangementH.php">Manage Chargers</a></li>
+              <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
               <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
             <?php endif; ?>
           </ul>

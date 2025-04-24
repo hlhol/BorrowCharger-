@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         if ($result === true) {
             $_SESSION['login'] = true;
             $_SESSION['user_role'] = $role;
-
+            $_SESSION['username'] = $username;
             header('Location: DashBoard.php');
             exit;
         } else {

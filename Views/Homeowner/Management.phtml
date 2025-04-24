@@ -1,0 +1,62 @@
+<?php require('Views/template/header.phtml') ?>
+
+<!-- Homeowner Dashboard Header -->
+<header class="bg-dark py-5">
+    <div class="container px-5" id="welcome-section">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-lg-8 col-xl-7 col-xxl-6">
+                <div class="my-5 text-center text-xl-start">
+                    <h1 class="display-5 fw-bolder text-white mb-2">🏠 Manage Your Charge Point</h1>
+                    <p class="lead fw-normal text-white-50 mb-4">
+                        Add a new point, update price or availability, and review booking requests easily.
+                    </p>
+                </div>
+            </div>
+            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
+                <img class="img-fluid rounded-3 my-5" src="https://dummyimage.com/600x400/343a40/6c757d" alt="EV Charging"/>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Cards Section -->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 row-cols-1 row-cols-md-3 text-center">
+            <!-- Add Charge Point Card -->
+            <div class="col mb-5">
+                <div class="card h-100 shadow border-0" onclick="window.location.href='add_point.php'">
+                    <div class="card-body p-4">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-plus-circle"></i></div>
+                        <h5 class="card-title">Add Charge Point</h5>
+                        <p class="card-text">Register a new EV charging point with location, price, and availability.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Charge Point Card -->
+            <div class="col mb-5">
+                <div class="card h-100 shadow border-0" onclick="window.location.href='edit_point.php'">
+                    <div class="card-body p-4">
+                        <div class="feature bg-success bg-gradient text-white rounded-3 mb-3"><i class="bi bi-pencil-square"></i></div>
+                        <h5 class="card-title">Edit Your Point</h5>
+                        <p class="card-text">Update the price, availability, and description of your charger.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approve Bookings Card -->
+            <div class="col mb-5">
+                <div class="card h-100 shadow border-0" onclick="window.location.href='approve_bookings.php'">
+                    <div class="card-body p-4">
+                        <div class="feature bg-warning bg-gradient text-white rounded-3 mb-3"><i class="bi bi-calendar-check"></i></div>
+                        <h5 class="card-title">Booking Requests</h5>
+                        <p class="card-text">Review and respond to pending booking requests from users.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<?php require('Views/template/footer.phtml') ?>
