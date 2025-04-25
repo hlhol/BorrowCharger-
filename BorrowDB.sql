@@ -1,15 +1,11 @@
--- Create Database
 DROP DATABASE IF EXISTS BorowChager;
-
--- Create Database
 CREATE DATABASE BorowChager;
 USE BorowChager;
 
--- Create Tables (unchanged)
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
-    fname VARCHAR(255) ,
+    fname VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     role ENUM('User', 'Homeowner', 'Admin') NOT NULL,
     status ENUM('Active', 'Suspended', 'Pending') DEFAULT 'Pending',
@@ -17,7 +13,7 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS charge_points (
+CREATE TABLE charge_points (
     point_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     address TEXT NOT NULL,
@@ -27,67 +23,76 @@ CREATE TABLE IF NOT EXISTS charge_points (
     price DECIMAL(5,2) NOT NULL,
     availability ENUM('Available', 'Unavailable') DEFAULT 'Available',
     image_path VARCHAR(255),
-    description TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
--- Create other tables (availability_schedule, Bookings, reviews, Messages)
-CREATE TABLE IF NOT EXISTS availability_schedule (
-    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
-    charge_point_id INT NOT NULL,
-    day_of_week TINYINT NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    is_available BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (charge_point_id) REFERENCES charge_points(point_id)
-);
-
-CREATE TABLE IF NOT EXISTS Bookings (
+CREATE TABLE Bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     point_id INT NOT NULL,
     start_datetime DATETIME NOT NULL,
     end_datetime DATETIME NOT NULL,
-    status ENUM('Pending', 'Approved', 'Declined', 'Completed') DEFAULT 'Pending',
+    status ENUM('Pending', 'Approved', 'Declined') DEFAULT 'Pending',
+    duration_hours DECIMAL(5,2),
     total_price DECIMAL(10,2),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (point_id) REFERENCES charge_points(point_id)
 );
 
-CREATE TABLE IF NOT EXISTS reviews (
-    review_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id INT NOT NULL,
-    rating TINYINT NOT NULL,
-    comment TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
-);
-
-CREATE TABLE IF NOT EXISTS Messages (
+CREATE TABLE Messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
-    booking_id INT NOT NULL,
+    booking_id INT,
     content TEXT NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES Users(user_id),
     FOREIGN KEY (receiver_id) REFERENCES Users(user_id),
-    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
+    FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id) ON DELETE SET NULL
 );
 
-
--- Insert Admin user
 INSERT INTO Users (username, fname, password, role, status, email)
 VALUES (
     'admin@admin.com',
     'User Lee Griffiths',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEaN1/u/8SO5lEHG2uPaOeGJ5xCy',
+    '$2y$10$u4ZcRskyKrGBD9poIqGddet8KF.ScbANDOV6gLuMHi3YsP5pxrdh.',
     'Admin',
     'Active',
     'admin@admin.com'
+);
+
+INSERT INTO Users (username, fname, password, role, status, email)
+VALUES (
+    'lee@lee.com',
+    'Lee Griffiths',
+    '$2y$10$u4ZcRskyKrGBD9poIqGddet8KF.ScbANDOV6gLuMHi3YsP5pxrdh.', 
+    'Homeowner',
+    'Active',
+    'lee@lee.com'
+);
+
+INSERT INTO Users (username, fname, password, role, status, email)
+VALUES (
+    'user@user.com',
+    'User Lee Griffiths',
+    '$2y$10$u4ZcRskyKrGBD9poIqGddet8KF.ScbANDOV6gLuMHi3YsP5pxrdh.',
+    'User',
+    'Active',
+    'user@user.com'
+);
+
+
+INSERT INTO charge_points (user_id, address, postcode, latitude, longitude, price, availability)
+VALUES (
+    2, 
+    '5 The Crescent, Salford, M5 4WT',
+    'M5 4WT',
+    53.483710,
+    -2.270110,
+    0.25, -- Price per kWh
+    'Available'
 );
