@@ -1,62 +1,136 @@
 <?php require('Views/template/header.phtml') ?>
 
-<!-- Homeowner Dashboard Header -->
-<header class="bg-dark py-5">
-    <div class="container px-5" id="welcome-section">
-        <div class="row gx-5 align-items-center justify-content-center">
-            <div class="col-lg-8 col-xl-7 col-xxl-6">
-                <div class="my-5 text-center text-xl-start">
-                    <h1 class="display-5 fw-bolder text-white mb-2">🏠 Manage Your Charge Point</h1>
-                    <p class="lead fw-normal text-white-50 mb-4">
-                        Add a new point, update price or availability, and review booking requests easily.
-                    </p>
+<h2 class="mb-4 text-center fs-4">Your Charge Points</h2>
+
+<?php if (isset($view->success)): ?>
+    <div class="alert alert-success text-center small"><?= $view->success ?></div>
+<?php endif; ?>
+
+<?php if (isset($view->error)): ?>
+    <div class="alert alert-danger text-center small"><?= $view->error ?></div>
+<?php else: ?>
+   <?php if (!empty($view->chargePoints)): ?>
+    <div class="charge-points-list">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <?php foreach ($view->chargePoints as $point): ?>
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <?php if ($point['image_path']): ?>
+                            <img src="<?= htmlspecialchars($point['image_path']) ?>" 
+                                 class="card-img-top" 
+                                 alt="Charge point"
+                                 style="height: 200px; object-fit: cover;">
+                        <?php endif; ?>
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    £<?= number_format($point['price'], 2) ?>/kWh
+                                </h5>
+                                <span class="badge <?= $point['availability'] === 'Available' ? 'bg-success' : 'bg-danger' ?>">
+                                    <?= $point['availability'] ?>
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <p class="card-text mb-1">
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                                    <?= htmlspecialchars($point['address']) ?>
+                                </p>
+                                <p class="card-text text-muted small">
+                                    <?= htmlspecialchars($point['postcode']) ?>
+                                </p>
+                            </div>
+
+                            <dl class="row small mb-3">
+                                <dt class="col-5">Coordinates</dt>
+                                <dd class="col-7 text-muted">
+                                    <?= number_format($point['latitude'], 6) ?>, 
+                                    <?= number_format($point['longitude'], 6) ?>
+                                </dd>
+                            </dl>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <!-- edit Button -->
+                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="ms-2">
+                                        <input type="hidden" name="point_id" value="<?= $point['point_id'] ?>">
+                                        <button type="submit" name="edit"class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil-square me-1"></i>Edit
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- delete Button -->
+                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="ms-2">
+                                        <input type="hidden" name="point_id" value="<?= $point['point_id'] ?>">
+                                        <button type="submit" name="delete" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <small class="text-muted">
+                                    Updated: <?= date('d/m/Y H:i', strtotime($point['updated_at'])) ?>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center">
-                <img class="img-fluid rounded-3 my-5" src="https://dummyimage.com/600x400/343a40/6c757d" alt="EV Charging"/>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
-</header>
+    <?php else: ?>
+        <div class="alert alert-info text-center small">No charge points found. Add your first one below!</div>
 
-<!-- Dashboard Cards Section -->
-<section class="py-5">
-    <div class="container px-5 my-5">
-        <div class="row gx-5 row-cols-1 row-cols-md-3 text-center">
-            <!-- Add Charge Point Card -->
-            <div class="col mb-5">
-                <div class="card h-100 shadow border-0" onclick="window.location.href='add_point.php'">
-                    <div class="card-body p-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-plus-circle"></i></div>
-                        <h5 class="card-title">Add Charge Point</h5>
-                        <p class="card-text">Register a new EV charging point with location, price, and availability.</p>
-                    </div>
+        <!-- Centered form container -->
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+            <div class="card shadow-sm" style="width: 100%; max-width: 500px; font-size: 0.9rem;">
+                <div class="card-header bg-primary text-white py-2 px-3">
+                    <h3 class="mb-0 fs-5">Add New Charge Point</h3>
                 </div>
-            </div>
-
-            <!-- Edit Charge Point Card -->
-            <div class="col mb-5">
-                <div class="card h-100 shadow border-0" onclick="window.location.href='edit_point.php'">
-                    <div class="card-body p-4">
-                        <div class="feature bg-success bg-gradient text-white rounded-3 mb-3"><i class="bi bi-pencil-square"></i></div>
-                        <h5 class="card-title">Edit Your Point</h5>
-                        <p class="card-text">Update the price, availability, and description of your charger.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Approve Bookings Card -->
-            <div class="col mb-5">
-                <div class="card h-100 shadow border-0" onclick="window.location.href='approve_bookings.php'">
-                    <div class="card-body p-4">
-                        <div class="feature bg-warning bg-gradient text-white rounded-3 mb-3"><i class="bi bi-calendar-check"></i></div>
-                        <h5 class="card-title">Booking Requests</h5>
-                        <p class="card-text">Review and respond to pending booking requests from users.</p>
-                    </div>
+                <div class="card-body p-3">
+                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" >
+                        <div class="mb-2">
+                            <label for="address" class="form-label small">Address *</label>
+                            <textarea class="form-control form-control-sm" id="address" name="address" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label for="postcode" class="form-label small">Postcode *</label>
+                            <input type="text" class="form-control form-control-sm" id="postcode" name="postcode" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label for="latitude" class="form-label small">Latitude *</label>
+                                <input type="number" step="0.00000001" class="form-control form-control-sm" id="latitude" name="latitude" required>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label for="longitude" class="form-label small">Longitude *</label>
+                                <input type="number" step="0.00000001" class="form-control form-control-sm" id="longitude" name="longitude" required>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="price" class="form-label small">Price per kWh (£) *</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="price" name="price" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="availability" class="form-label small">Availability</label>
+                            <select class="form-select form-select-sm" id="availability" name="availability">
+                                <option value="Available" selected>Available</option>
+                                <option value="Unavailable">Unavailable</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label small">Charge Point Image</label>
+                            <input type="file" class="form-control form-control-sm" id="image" name="image">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" name="submit" class="btn btn-sm btn-success px-4">Add</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    <?php endif; ?>
+<?php endif; ?>
 
 <?php require('Views/template/footer.phtml') ?>
