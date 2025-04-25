@@ -19,6 +19,62 @@ if (isset($_SESSION['user_role'])) {
             $view->chargePoints = $result;
         }
         
+        $view->BookingReq = $homeowner->GetAllBooking($userID);
+        
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+        
+        // Get charge points
+        $result = $homeowner->getMyPoint($userID);
+        if (isset($result['error'])) {
+            $view->error = $result['error'];
+        } else {
+            $view->chargePoints = $result;
+        }
+        
+        // Get paginated bookings
+        $view->BookingReq = $homeowner->GetAllBooking($userID, $limit, $offset);
+        $view->page = $page;
+        $view->limit = $limit;
+
+        // Handle booking actions
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+            $bookingID = isset($_POST['booking_id']) ? (int)$_POST['booking_id'] : null;
+            $action = $_POST['action'];
+
+            if ($bookingID) {
+                $success = false;
+                $actionVerb = '';
+                
+                switch ($action) {
+                    case 'accept':
+                        $success = $homeowner->acceptBooking($bookingID, $userID);
+                        $actionVerb = 'accepted';
+                        break;
+                    case 'decline':
+                        $success = $homeowner->declineBooking($bookingID, $userID);
+                        $actionVerb = 'declined';
+                        break;
+                    default:
+                        $_SESSION['error'] = "Invalid action.";
+                        break;
+                }
+
+                if ($success) {
+                    $_SESSION['success'] = "Booking $actionVerb successfully!";
+                } else {
+                    $_SESSION['error'] = "Failed to $action booking or booking not found.";
+                }
+                header("Location: Mangement.php?page=$page");
+                exit;
+            } else {
+                $_SESSION['error'] = "Invalid booking ID.";
+                header("Location: Mangement.php?page=$page");
+                exit;
+            }
+        }
+        
         //for delete
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
             if (isset($_POST['point_id'])) {

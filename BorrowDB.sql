@@ -96,3 +96,14 @@ VALUES (
     0.25, -- Price per kWh
     'Available'
 );
+
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (
+    3,                 -- user_id (the User)
+    1,                 -- point_id (the charging point)
+    '2025-04-26 10:00:00', -- start_datetime
+    '2025-04-26 12:00:00', -- end_datetime
+    'Pending',         -- initial status
+    2.00,              -- duration in hours
+    0.50               -- total price (2 hours × £0.25/hour)
+);

@@ -19,7 +19,7 @@
                             <img src="<?= htmlspecialchars($point['image_path']) ?>" 
                                  class="card-img-top" 
                                  alt="Charge point"
-                                 style="height: 200px; object-fit: cover;">
+                                ">
                         <?php endif; ?>
                         
                         <div class="card-body">
@@ -78,13 +78,45 @@
                 </div>
             <?php endforeach; ?>
         </div>
+        <?php if (!empty($view->BookingReq)): ?>
+            <div>
+                <h2>Booking Requests (Page <?= $page ?>)</h2>
+                <?php foreach ($view->BookingReq as $book): ?>
+                    <div>
+                        <p><strong>Booking ID:</strong> <?= htmlspecialchars($book['booking_id']) ?></p>
+                        <p><strong>Booked By:</strong> <?= htmlspecialchars($book['booked_by']) ?></p>
+                        <p><strong>Charge Point Address:</strong> <?= htmlspecialchars($book['address']) ?></p>
+                        <p><strong>Start Time:</strong> <?= $book['start_datetime'] ?></p>
+                        <p><strong>End Time:</strong> <?= $book['end_datetime'] ?></p>
+                        <p><strong>Duration:</strong> <?= $book['duration_hours'] ?> hours</p>
+                        <p><strong>Total Price:</strong> £<?= $book['total_price'] ?></p>
+                        <p><strong>Status:</strong> <?= $book['status'] ?></p>
+
+                        <form method="POST" action="Mangement.php">
+                            <input type="hidden" name="booking_id" value="<?= $book['booking_id'] ?>">
+                            <button type="submit" name="action" value="accept">Accept</button>
+                            <button type="submit" name="action" value="decline">Decline</button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+
+                <div >
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?= $page - 1 ?>">← Previous</a>
+                    <?php endif; ?>
+                    <a href="?page=<?= $page + 1 ?>">Next →</a>
+                </div>
+            </div>
+        <?php else: ?>
+            <p>No booking requests found.</p>
+        <?php endif; ?>
     </div>
     <?php else: ?>
         <div class="alert alert-info text-center small">No charge points found. Add your first one below!</div>
 
         <!-- Centered form container -->
-        <div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
-            <div class="card shadow-sm" style="width: 100%; max-width: 500px; font-size: 0.9rem;">
+        <div class="d-flex justify-content-center align-items-center" >
+            <div class="card shadow-sm" ">
                 <div class="card-header bg-primary text-white py-2 px-3">
                     <h3 class="mb-0 fs-5">Add New Charge Point</h3>
                 </div>

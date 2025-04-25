@@ -169,5 +169,53 @@ public function deletePoint(int $pointID, int $userID) {
     $stmt->execute([$pointID, $userID]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+public function GetAllBooking($ownerID, $limit = 5, $offset = 0) {
+    $sql = "SELECT b.*, u.username AS booked_by, cp.address 
+            FROM Bookings b
+            INNER JOIN charge_points cp ON b.point_id = cp.point_id
+            INNER JOIN Users u ON b.user_id = u.user_id
+            WHERE cp.user_id = :user_id
+            ORDER BY b.created_at DESC
+            LIMIT :limit OFFSET :offset";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':user_id', $ownerID, PDO::PARAM_INT);
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+    
+public function acceptBooking($bookingID, $ownerID) {
+    $sql = "UPDATE Bookings b
+            JOIN charge_points cp ON b.point_id = cp.point_id
+            SET b.status = 'Accepted'
+            WHERE b.booking_id = :booking_id 
+            AND cp.user_id = :owner_id
+            AND b.status = 'Pending'";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':booking_id', $bookingID, PDO::PARAM_INT);
+    $stmt->bindParam(':owner_id', $ownerID, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->rowCount() > 0;
+}
+
+public function declineBooking($bookingID, $ownerID) {
+    $sql = "UPDATE Bookings b
+            JOIN charge_points cp ON b.point_id = cp.point_id
+            SET b.status = 'Declined'
+            WHERE b.booking_id = :booking_id 
+            AND cp.user_id = :owner_id
+            AND b.status = 'Pending'";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':booking_id', $bookingID, PDO::PARAM_INT);
+    $stmt->bindParam(':owner_id', $ownerID, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->rowCount() > 0;
+}
+    
     
 }
