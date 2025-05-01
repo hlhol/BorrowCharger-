@@ -25,7 +25,7 @@ CREATE TABLE charge_points (
     image_path VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Bookings (
@@ -38,8 +38,8 @@ CREATE TABLE Bookings (
     duration_hours DECIMAL(5,2),
     total_price DECIMAL(10,2),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (point_id) REFERENCES charge_points(point_id)
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (point_id) REFERENCES charge_points(point_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Messages (
@@ -50,8 +50,8 @@ CREATE TABLE Messages (
     content TEXT NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
-    FOREIGN KEY (receiver_id) REFERENCES Users(user_id),
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES Users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id) ON DELETE SET NULL
 );
 
