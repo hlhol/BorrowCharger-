@@ -95,7 +95,7 @@ class HomeOwner {
     }
     
     public function acceptBooking(int $bookingID, int $ownerID): bool {
-        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Accepted');
+        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Approved');
     }
 
     public function declineBooking(int $bookingID, int $ownerID): bool {
