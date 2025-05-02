@@ -183,10 +183,3 @@ if (isset($_SESSION['user_role'])) {
     header('Location: login.php');
     exit;
 }
-
-// Image upload handler function
-function handleImageUpload($file) {
-    // Implement your image upload logic here
-    // Return ['path' => 'path/to/image'] on success
-    // or ['error' => 'Error message'] on failure
-}

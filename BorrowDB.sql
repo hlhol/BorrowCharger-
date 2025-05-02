@@ -107,3 +107,26 @@ VALUES (
     2.00,              -- duration in hours
     0.50               -- total price (2 hours × £0.25/hour)
 );
+-- Booking 1
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-04-26 10:00:00', '2025-04-26 12:00:00', 'Pending', 2.00, 0.50);
+
+-- Booking 2
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-04-27 08:00:00', '2025-04-27 10:00:00', 'Pending', 2.00, 0.50);
+
+-- Booking 3
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-04-28 14:30:00', '2025-04-28 17:00:00', 'Pending', 2.50, 0.625);
+
+-- Booking 4
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-04-29 11:00:00', '2025-04-29 13:30:00', 'Pending', 2.50, 0.625);
+
+-- Booking 5
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-04-30 09:00:00', '2025-04-30 11:00:00', 'Pending', 2.00, 0.50);
+
+-- Booking 6
+INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
+VALUES (3, 1, '2025-05-01 16:00:00', '2025-05-01 18:00:00', 'Pending', 2.00, 0.50);
