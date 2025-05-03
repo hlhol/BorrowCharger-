@@ -74,4 +74,43 @@ public function create(int $ownerId, array $data): bool {
         );
         return $stmt->execute([$pointId, $ownerId]);
     }
+    
+    public function hasActiveBookings(int $pointId): bool {
+        $now = date('Y-m-d H:i:s');
+        $query = "
+            SELECT COUNT(*) FROM Bookings 
+            WHERE point_id = :pointId 
+            AND status = :status 
+            AND start_datetime <= :now 
+            AND end_datetime >= :now
+        ";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':pointId', $pointId, PDO::PARAM_INT);
+        $stmt->bindValue(':status', 'Approved', PDO::PARAM_STR); // using fixed value 'Approved' (or 'Avar' as per your note)
+        $stmt->bindValue(':now', $now, PDO::PARAM_STR);
+
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function updateAvailability(int $pointId): bool {
+        $isBooked = $this->hasActiveBookings($pointId);
+        $newAvailability = $isBooked ? 'Unavailable' : 'Available';
+
+        $query = "
+            UPDATE charge_points 
+            SET availability = :availability 
+            WHERE point_id = :pointId
+        ";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':availability', $newAvailability, PDO::PARAM_STR);
+        $stmt->bindValue(':pointId', $pointId, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+
+
 }
