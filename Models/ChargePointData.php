@@ -23,7 +23,8 @@ class ChargePointData {
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function create(int $ownerId, array $data): bool {
+public function create(int $ownerId, array $data): bool {
+    try {
         $stmt = $this->conn->prepare(
             "INSERT INTO charge_points 
             (user_id, address, postcode, latitude, longitude, price, availability, image_path)
@@ -40,7 +41,11 @@ class ChargePointData {
             $data['availability'] ?? 'Available',
             $data['image_path'] ?? null
         ]);
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return false;
     }
+}
 
     public function update(int $pointId, int $ownerId, array $data): bool {
         $stmt = $this->conn->prepare(

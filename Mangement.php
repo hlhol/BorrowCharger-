@@ -153,25 +153,54 @@ if (isset($_SESSION['user_role'])) {
             
             // Add new charge point
             if (isset($_POST['submit'])) {
-                $formData = [
-                    'address' => trim($_POST['address']),
-                    'postcode' => trim($_POST['postcode']),
-                    'latitude' => (float) trim($_POST['latitude']), 
-                    'longitude' => (float) trim($_POST['longitude']), 
-                    'price' => (float) trim($_POST['price']), 
-                    'availability' => $_POST['availability'] ?? 'Available',
-                    'image_path' => null 
-                ];
+    $formData = [
+        'address' => trim($_POST['address']),
+        'postcode' => trim($_POST['postcode']),
+        'latitude' => (float) trim($_POST['latitude']), 
+        'longitude' => (float) trim($_POST['longitude']), 
+        'price' => (float) trim($_POST['price']), 
+        'availability' => $_POST['availability'] ?? 'Available',
+        'image_path' => null 
+    ];
 
-                $response = $homeowner->addPoint($userID, $formData);
-                if (isset($response['success'])) {
-                    $view->success = $response['success'];
-                    $view->chargePoints = $homeowner->getMyPoint($userID);
-                } else {
-                    $view->error = $response['error'];
-                }
+    // Handle file upload
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = 'uploads/';
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+        
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($fileInfo, $_FILES['image']['tmp_name']);
+        finfo_close($fileInfo);
+        
+        // Validate file
+        if (in_array($mimeType, $allowedTypes) && $_FILES['image']['size'] <= $maxSize) {
+            $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $filename = uniqid('chargepoint_') . '.' . $extension;
+            $destination = $uploadDir . $filename;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                $formData['image_path'] = $destination;
+            } else {
+                $view->error = "Failed to upload image.";
+                return;
             }
+        } else {
+            $view->error = "Invalid file type or size (max 2MB allowed).";
+            return;
         }
+    }
+
+    $response = $homeowner->addPoint($userID, $formData);
+    if (isset($response['success'])) {
+        $view->success = $response['success'];
+        $view->chargePoints = $homeowner->getMyPoint($userID);
+    } else {
+        $view->error = $response['error'];
+    }
+        }
+        
+    }
         
         // Load the view
         require_once('Views/Homeowner/Management.phtml');
