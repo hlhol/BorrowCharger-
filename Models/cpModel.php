@@ -15,8 +15,6 @@ class cpModel {
         $this->availability = $row['availability'];
         $this->price = $row['price'];
         $this->imagePath = !empty($row['image_path']) ? $row['image_path'] : '';
-;
-
     }
 
     public function getId(): int { return $this->id; }
