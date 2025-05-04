@@ -1,0 +1,100 @@
+<?php require('Views/template/header.phtml') ?>
+
+<script>
+    const usageOverTime = <?= $usageOverTime ?>;
+    const chargerStatusOverview = <?= $chargerStatusOverview ?>;
+
+    // Area Chart - Usage Over Time
+    const ctxArea = document.getElementById("myAreaChart").getContext("2d");
+    new Chart(ctxArea, {
+        type: 'line',
+        data: {
+            labels: usageOverTime.labels,
+            datasets: [{
+                label: 'Bookings',
+                data: usageOverTime.data,
+                borderColor: 'rgba(75,192,192,1)',
+                backgroundColor: 'rgba(75,192,192,0.2)',
+                fill: true
+            }]
+        }
+    });
+
+    // Bar Chart - Charger Status Overview
+    const ctxBar = document.getElementById("myBarChart").getContext("2d");
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: chargerStatusOverview.labels,
+            datasets: [{
+                label: 'Chargers',
+                data: chargerStatusOverview.data,
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107']
+            }]
+        }
+    });
+</script>
+
+
+<div id="layoutSidenav_content">
+    <main class="container-fluid px-4">
+        <h1 class="mt-4">Dashboard</h1>
+        <p class="mb-4 text-muted">Welcome! Here's an overview of your platform's recent activity.</p>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Users</h5>
+                       <p class="card-text fs-4"><?= htmlspecialchars($totalUsers) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Chargers</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($activeChargers) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Bookings</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($pendingBookings) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-chart-area me-1"></i>
+                        Usage Over Time
+                    </div>
+                    <div class="card-body">
+                        <canvas id="myAreaChart" width="100%" height="40"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-1"></i>
+                        Charger Status Overview
+                    </div>
+                    <div class="card-body">
+                        <canvas id="myBarChart" width="100%" height="40"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<?php require('Views/template/footer.phtml') ?>

@@ -1,0 +1,68 @@
+<?php require('Views/template/header.phtml'); ?>
+
+<div class="container my-5">
+    <h2 class="fw-bold mb-4 text-center">Manage Charge Points</h2>
+
+    <a href="/chargepoints/create" class="btn btn-success mb-3">Add New Charge Point</a>
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered align-middle table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Point Id</th>
+                    <th>Address</th>
+                    <th>Price</th>
+                    <th>Availability</th>
+                    <th>Image</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($view->chargePoints as $cpModel): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($cpModel->getId()) ?></td>
+                        <td><?= htmlspecialchars($cpModel->getAddress()) ?></td>
+                        <td><?= htmlspecialchars($cpModel->getprice()) ?> BHD</td>
+                        <td>
+                            <span class="badge bg-<?= $cpModel->getAvailability() == 'Available' ? 'warning text-dark' : 'success' ?>">
+                            <?= ucfirst(htmlspecialchars($cpModel->getAvailability())) ?>
+                            </span>
+                        </td>
+                        <td>
+                           <?php if (!empty($cpModel->getImagePath())): ?>
+    <img src="<?= htmlspecialchars($cpModel->getImagePath()) ?>" width="80" height="60">
+<?php else: ?>
+    N/A
+<?php endif; ?>
+                        <td class="text-center">
+           <?php
+    $actions = [];
+
+    $actions[] = '<a href="manage_users_action.php?action=approve&id=' . $cpModel->getId() . '" class="text-success text-decoration-none">Add</a>';
+    $actions[] = '<a href="manage_users_action.php?action=suspend&id=' . $cpModel->getId() . '" class="text-warning text-decoration-none">Edit</a>';
+    $actions[] = '<a href="manage_users_action.php?action=delete&id=' . $cpModel->getId() . '" class="text-danger text-decoration-none" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+
+    echo implode(' | ', $actions);
+?>
+
+
+        </td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional Pagination (if you have a large number of charge points) -->
+    <?php if (count($view->chargePoints ?? []) > 10): ?>
+        <div class="pagination">
+            <a href="?page=1" class="btn btn-outline-primary btn-sm">First</a>
+            <a href="?page=<?= $currentPage - 1 ?>" class="btn btn-outline-primary btn-sm">Previous</a>
+            <span>Page <?= $currentPage ?> of <?= $totalPages ?></span>
+            <a href="?page=<?= $currentPage + 1 ?>" class="btn btn-outline-primary btn-sm">Next</a>
+            <a href="?page=<?= $totalPages ?>" class="btn btn-outline-primary btn-sm">Last</a>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php require('Views/template/footer.phtml'); ?>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title><?php echo $view->pageTitle; ?></title>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous" />
+
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="/public/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="index.php">⚡ Borrow My Charger</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <?php if (!isset($_SESSION['login'])): ?>
+                            <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="signUp.php">Sign Up</a></li>
+                        <?php elseif ($_SESSION['user_role'] === 'User'): ?>
+                            <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Booking.php">Book Charger</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
+                        <?php elseif ($_SESSION['user_role'] === 'Admin'): ?>
+                            <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
+                            <li class="nav-item"><a class="nav-link" href="ManageU.php">Manage Users</a></li>
+                        <?php elseif ($_SESSION['user_role'] === 'Homeowner'): ?>
+                            <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
+                        <?php endif; ?>
+                    </ul>
+
+                    <?php if (isset($_SESSION['login'])): ?>
+                        <form action="logout.php" method="POST" class="d-flex ms-3">
+                            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </nav>
+    </header>
+</body>
+
+</html>

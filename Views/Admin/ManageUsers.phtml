@@ -1,0 +1,51 @@
+
+
+    <?php require('Views/template/header.phtml') ?>
+
+    <div class="container my-5">
+        <h2 class="fw-bold mb-4 text-center">Manage Users</h2>
+
+        <div class="table-responsive shadow-sm rounded-3">
+            <table class="table table-bordered table-striped table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($view->users as $user): ?>
+        <tr>
+            <td><?= htmlspecialchars($user->getName()) ?></td>
+            <td><?= htmlspecialchars($user->getEmail()) ?></td>
+            <td><?= htmlspecialchars($user->getRole()) ?></td>
+            <td>
+                <span class="badge bg-<?= $user->getStatus() == 'pending' ? 'warning text-dark' : 'success' ?>">
+                    <?= ucfirst(htmlspecialchars($user->getStatus())) ?>
+                </span>
+            </td>
+            <td class="text-center">
+               <?php
+        $actions = [];
+
+        $actions[] = '<a href="manage_users_action.php?action=approve&id=' . $user->getId() . '" class="text-success text-decoration-none">Approve</a>';
+        $actions[] = '<a href="manage_users_action.php?action=suspend&id=' . $user->getId() . '" class="text-warning text-decoration-none">Suspend</a>';
+        $actions[] = '<a href="manage_users_action.php?action=delete&id=' . $user->getId() . '" class="text-danger text-decoration-none" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+
+        echo implode(' | ', $actions);
+    ?>
+
+
+            </td>
+        </tr>
+    <?php endforeach; ?>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <?php require('Views/template/footer.phtml') ?>

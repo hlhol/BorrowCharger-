@@ -1,0 +1,43 @@
+<?php require('template/header.phtml') ?>
+
+<!-- Page content -->
+<section class="py-5">
+  <div class="container px-5">
+
+    <!-- Login Form Section -->
+    <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+      <div class="text-center mb-5">
+        <div class="feature d-flex align-items-center justify-content-center bg-primary bg-gradient text-white mb-3"><i class="bi bi-box-arrow-in-right fs-1"></i></div>
+        <h2 class="fw-bolder">Login</h2>
+        <p class="lead fw-normal text-muted mb-0">Access your account</p>
+      </div>
+      <div class="row gx-5 justify-content-center">
+          
+           <?php if (!empty($view->error)) : ?>
+                ss<div class="alert alert-danger text-center mt-3 fade-message"><?= htmlspecialchars($view->error) ?></div>
+            <?php endif; ?>
+
+        <div class="col-lg-8 col-xl-6">
+          <form id="loginForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Email or Username" required>
+                <label for="identifier">Email or Username</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" name="pass" id="pass" placeholder="Password" required>
+              <label for="pass">Password</label>
+            </div>
+            <div class="d-grid mb-3">
+              <button type="submit" name="submit" class="btn btn-primary btn-lg">Submit</button>
+            </div>
+            <div class="text-center">
+              <a href="signUp.php">Don't have an account? Sign Up</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+      </div>
+</section>
+
+<?php require('template/footer.phtml') ?>
