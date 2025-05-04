@@ -207,6 +207,7 @@ if (isset($_SESSION['user_role'])) {
         
     } elseif ($_SESSION['user_role'] === 'Admin') {
         // Admin logic here
+
       
          // Initialize DB and model
         $db = new Database();
@@ -240,8 +241,11 @@ if (isset($_SESSION['user_role'])) {
     }
         }
     require_once('Views/Admin/ManageCharge.phtml'); 
+
+    }
+
 } else {
     header('Location: login.php');
     exit;
 }
-    }
+

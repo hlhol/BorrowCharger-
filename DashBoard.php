@@ -7,13 +7,16 @@ require_once 'Models/ChargePointData.php';
 require_once 'Models/MangementH.php';
 
 
+
 session_start();
 $view = new stdClass();
 $view->pageTitle = 'Dahsboard';
 
+
 $db = new Database();
         $conn = $db->connect();
         
+
 if (isset($_SESSION['user_role'])) {
     if ($_SESSION['user_role'] === 'User') {
         
@@ -23,6 +26,7 @@ if (isset($_SESSION['user_role'])) {
         require_once('Views/Homeowner/DashBoardH.phtml');
     } elseif ($_SESSION['user_role'] === 'Admin') {
         
+
         
         $userModel = new UserData($conn);
         $chargePointModel = new ChargePointData($conn);

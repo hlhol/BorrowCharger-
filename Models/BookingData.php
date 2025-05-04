@@ -39,6 +39,7 @@ public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array
         );
         return $stmt->execute([$status, $bookingId, $ownerId]);
     }
+
     
     
     public function countPending(): int {
@@ -59,6 +60,5 @@ public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
     
 }

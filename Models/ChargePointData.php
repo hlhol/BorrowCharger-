@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Models/Database.php';
+
 require_once 'Models/cpModel.php';
 
 class ChargePointData {
@@ -149,6 +150,5 @@ public function getAvailabilityStats(): array {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 
 }

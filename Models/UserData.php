@@ -1,7 +1,9 @@
 <?php
 
 require_once 'Models/Database.php';
+
 require_once 'Models/User.php';
+
 
 class UserData {
     private $conn;
@@ -35,6 +37,7 @@ class UserData {
         $stmt->execute([$userId]);
         return (int)$stmt->fetchColumn();
     }
+
     
      public function countAllUsers(): int {
     $stmt = $this->conn->query("SELECT COUNT(*) FROM users");
@@ -73,7 +76,5 @@ class UserData {
     $stmt = $this->conn->prepare("DELETE FROM users WHERE user_id = ?");
     $stmt->execute([$id]);
     }
-    
-  
     
 }
