@@ -1,7 +1,6 @@
 <?php
 
 require_once 'Models/Database.php';
-
 require_once 'Models/cpModel.php';
 
 class ChargePointData {
@@ -114,20 +113,18 @@ public function create(int $ownerId, array $data): bool {
     }
     
     
-   public function fetchAll() {
-    $stmt = $this->conn->query(
-        "SELECT point_id, address, postcode, availability, price , image_path  FROM charge_points"
-    );
+    public function fetchAll() {
+       $stmt = $this->conn->query(
+           "SELECT point_id, address, postcode, latitude, longitude, availability, price, image_path 
+            FROM charge_points"  
+       );
 
-    $results = [];
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-       $results[] = new cpModel($row);
-
-    }
-
-    return $results;
-}
+       $results = [];
+       while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+           $results[] = new cpModel($row);
+       }
+       return $results;
+   }
 
     
     

@@ -1,0 +1,18 @@
+<?php require('Views/template/header.phtml'); ?>
+<div id="map" style="height: 500px; width: 100%;"></div>
+
+<script>
+    window.chargePoints = <?= json_encode(array_map(function($cp) {
+        return [
+            'latitude' => $cp->getLatitude(),
+            'longitude' => $cp->getLongitude(),
+            'address' => htmlspecialchars($cp->getAddress(), ENT_QUOTES),
+            'price' => $cp->getPrice(),
+            'availability' => htmlspecialchars($cp->getAvailability(), ENT_QUOTES),
+        ];
+    }, $chargePoints ?? [])); ?>;
+</script>
+
+<script src="public/js/map/map.js"></script>
+
+<?php require('Views/template/footer.phtml'); ?>
