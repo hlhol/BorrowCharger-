@@ -27,7 +27,7 @@ class UserData {
 
     public function isHomeowner(int $userId): bool {
         $user = $this->getById($userId);
-        return $user && $user['role'] === 'Homeowner';
+        return $user && $user['role'] === 'Homeowner' && $user['status'] === 'Active';
     }
 
     public function countChargePoints(int $userId): int {

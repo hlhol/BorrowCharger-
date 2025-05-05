@@ -11,9 +11,9 @@ class Login {
 
     public function auth($identifier, $password) {
         if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-            $query = "SELECT user_id, username, email, password, role FROM Users WHERE email = ?";
+            $query = "SELECT user_id, username, email, password, role, status FROM Users WHERE email = ?";
         } else {
-            $query = "SELECT user_id, username, email, password, role FROM Users WHERE username = ?";
+            $query = "SELECT user_id, username, email, password, role, status FROM Users WHERE username = ?";
         }
 
         $stmt = $this->conn->prepare($query);

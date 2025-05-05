@@ -36,18 +36,22 @@
                             <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
                             <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
                             <li class="nav-item"><a class="nav-link" href="signUp.php">Sign Up</a></li>
-                        <?php elseif ($_SESSION['user_role'] === 'User'): ?>
+                        <?php elseif ($_SESSION['user_role'] === 'User' && $_SESSION['AcStatus'] === 'Active'): ?>
                             <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="Booking.php">Book Charger</a></li>
                             <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
-                        <?php elseif ($_SESSION['user_role'] === 'Admin'): ?>
+                        <?php elseif ($_SESSION['user_role'] === 'Admin' && $_SESSION['AcStatus'] === 'Active'): ?>
                             <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
                             <li class="nav-item"><a class="nav-link" href="ManageU.php">Manage Users</a></li>
-                        <?php elseif ($_SESSION['user_role'] === 'Homeowner'): ?>
+                        <?php elseif ($_SESSION['user_role'] === 'Homeowner' && $_SESSION['AcStatus'] === 'Active'): ?>
                             <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
                             <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
+                        <?php elseif ($_SESSION['user_role'] === 'Homeowner' && ($_SESSION['AcStatus'] === 'Pending' ||$_SESSION['AcStatus'] === 'Suspended') ): ?>
+                            <li class="nav-item"><a class="nav-link" href="pendAnd.php">Home</a></li>
+                        <?php elseif ($_SESSION['user_role'] === 'User' && ($_SESSION['AcStatus'] === 'Pending' ||$_SESSION['AcStatus'] === 'Suspended') ): ?>
+                            <li class="nav-item"><a class="nav-link" href="pendAnd.php">Home</a></li>
                         <?php endif; ?>
                     </ul>
 

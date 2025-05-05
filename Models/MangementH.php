@@ -25,14 +25,14 @@ class HomeOwner {
     
     public function getMyPoint(int $ownerID): array {
         if (!$this->userData->isHomeowner($ownerID)) {
-            return ['error' => 'Access denied. User is not a homeowner.'];
+            return ['error' => 'Access denied. User is not a homeowner or the status not active.'];
         }
         return $this->chargePointData->getByOwner($ownerID);
     }
 
     public function editPoint(int $pointID, int $userID, array $data): array {
         if (!$this->userData->isHomeowner($userID)) {
-            return ['error' => 'Access denied.'];
+            return ['error' => 'Access denied. User is not a homeowner or the status not active.'];
         }
 
         $required = ['address', 'postcode', 'latitude', 'longitude', 'price'];
@@ -86,19 +86,32 @@ class HomeOwner {
             : ['error' => 'Point not found or could not be deleted.'];
     }
     
-    public function getChargePointById(int $pointID, int $userID): ?array {
-        return $this->chargePointData->getById($pointID, $userID);
+    public function getChargePointById(int $pointID, int $userID): array {
+        if (!$this->userData->isHomeowner($userID)) {
+            return ['error' => 'Access denied. User is not a homeowner.'];
+        }
+        $point = $this->chargePointData->getById($pointID, $userID);
+        return $point ?: ['error' => 'Charge point not found.'];
     }
 
     public function GetAllBooking(int $ownerID, int $limit = 5, int $offset = 0): array {
+        if (!$this->userData->isHomeowner($ownerID)) {
+            return ['error' => 'Access denied. User is not a homeowner.'];
+        }
         return $this->bookingData->getByOwner($ownerID, $limit, $offset);
     }
     
     public function acceptBooking(int $bookingID, int $ownerID): bool {
+        if (!$this->userData->isHomeowner($ownerID)) {
+            return false;
+        }
         return $this->bookingData->updateStatus($bookingID, $ownerID, 'Approved');
     }
 
     public function declineBooking(int $bookingID, int $ownerID): bool {
+        if (!$this->userData->isHomeowner($ownerID)) {
+            return false;
+        }
         return $this->bookingData->updateStatus($bookingID, $ownerID, 'Declined');
     }
 }
