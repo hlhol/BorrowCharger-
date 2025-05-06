@@ -1,8 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once 'Models/Database.php';
-require_once 'Models/ChargePointData.php'; 
-
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/ChargePointData.php';
 try {
     $database = new Database();
     $conn = $database->connect(); 
@@ -12,6 +11,7 @@ try {
     
     echo json_encode(array_map(function($cp) {
         return [
+            'id' => $cp->getId(),
             'latitude' => $cp->getLatitude(),
             'longitude' => $cp->getLongitude(),
             'address' => $cp->getAddress(),
