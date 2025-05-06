@@ -11,7 +11,7 @@ class User
         $this->conn = $db->connect();
     }
 
-    public function register($username, $email, $password, $role, $fname)
+    public function register($username, $email, $password, $role, $fname,  $status)
     {
         $checkUsernameSql = "SELECT COUNT(*) FROM users WHERE username = ?";
         $stmt = $this->conn->prepare($checkUsernameSql);
@@ -28,8 +28,6 @@ class User
         }
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $status = 'Active';
-
         $insertSql = "INSERT INTO users (username, fname, email, password, role, status)
                       VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($insertSql);

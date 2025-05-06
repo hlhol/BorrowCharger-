@@ -39,4 +39,26 @@ public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array
         );
         return $stmt->execute([$status, $bookingId, $ownerId]);
     }
+
+    
+    
+    public function countPending(): int {
+    $stmt = $this->conn->prepare("SELECT COUNT(*) FROM bookings WHERE status = 'Pending'");
+    $stmt->execute();
+    return (int)$stmt->fetchColumn();
+    }
+
+
+    public function getMonthlyBookingStats(): array {
+    $stmt = $this->conn->prepare("
+        SELECT DATE_FORMAT(start_datetime, '%b') AS month, COUNT(*) AS total
+        FROM bookings
+        WHERE status = 'Approved'
+        GROUP BY month
+        ORDER BY MONTH(STR_TO_DATE(month, '%b'))
+    ");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }
