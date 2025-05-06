@@ -28,7 +28,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Marker management
 let markers = L.layerGroup().addTo(map);
 let markerObjects = {};
 let userLocation = null;
