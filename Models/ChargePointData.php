@@ -1,7 +1,7 @@
 <?php
 
-require_once 'Models/Database.php';
-require_once 'Models/cpModel.php';
+require_once __DIR__ . '/Database.php';  
+require_once __DIR__ . '/cpModel.php';
 
 class ChargePointData {
     private $conn;
