@@ -1,9 +1,9 @@
 <?php require('Views/template/header.phtml') ?>
 
 <script>
-    const usageOverTime = <?= $usageOverTime ?>;
-    const chargerStatusOverview = <?= $chargerStatusOverview ?>;
-
+    <script>
+    const usageOverTime = <?= $view->usageOverTime ?>;
+    const chargerStatusOverview = <?= $view->chargerStatusOverview ?>;
     // Area Chart - Usage Over Time
     const ctxArea = document.getElementById("myAreaChart").getContext("2d");
     new Chart(ctxArea, {
@@ -43,7 +43,7 @@
 
         <!-- Summary Cards -->
         <div class="row mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-primary mb-3 shadow">
                     <div class="card-body">
                         <h5 class="card-title">Total Users</h5>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-success mb-3 shadow">
                     <div class="card-body">
                         <h5 class="card-title">Active Chargers</h5>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-warning mb-3 shadow">
                     <div class="card-body">
                         <h5 class="card-title">Pending Bookings</h5>
@@ -67,6 +67,17 @@
                     </div>
                 </div>
             </div>
+            
+            
+            <div class="col-md-3">
+                <div class="card text-white bg-danger mb-3 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending HomeOwners</h5>
+                        <p class="card-text fs-4"><?= htmlspecialchars($homeownerUsers) ?></p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
 
         <!-- Charts Section -->

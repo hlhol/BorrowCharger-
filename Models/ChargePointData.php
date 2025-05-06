@@ -148,4 +148,37 @@ public function getAvailabilityStats(): array {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+
+public function deleteChargePointByAdmin(int $pointId): bool {
+    $stmt = $this->conn->prepare("DELETE FROM charge_points WHERE point_id = ?");
+    return $stmt->execute([$pointId]);
+}
+
+public function getByIdForAdmin(int $pointId): ?array {
+    $stmt = $this->conn->prepare("SELECT * FROM charge_points WHERE point_id = ?");
+    $stmt->execute([$pointId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+public function updateChargePointByAdmin($pointID, $address, $postcode, $latitude, $longitude, $price, $availability, $imagePath) {
+    $sql = "UPDATE charge_points 
+            SET address = :address, postcode = :postcode, latitude = :latitude, 
+                longitude = :longitude, price = :price, availability = :availability, 
+                image_path = :image_path
+            WHERE point_id = :point_id";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':address', $address);
+    $stmt->bindParam(':postcode', $postcode);
+    $stmt->bindParam(':latitude', $latitude);
+    $stmt->bindParam(':longitude', $longitude);
+    $stmt->bindParam(':price', $price);
+    $stmt->bindParam(':availability', $availability);
+    $stmt->bindParam(':image_path', $imagePath);
+    $stmt->bindParam(':point_id', $pointID, PDO::PARAM_INT);
+
+    return $stmt->execute();
+}
+
+
 }

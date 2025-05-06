@@ -35,7 +35,7 @@ if (isset($_SESSION['user_role'])) {
         $totalUsers = $userModel->countAllUsers(); 
         $activeChargers = $chargePointModel->countAllChargePoints();
         $pendingBookings = $bookingModel->countPending();
-        
+        $homeownerUsers = $userModel->PendHomeowner(); 
         
         //$bookingStats = $bookingModel->getMonthlyBookingStats();
         //$months = array_column($bookingStats, 'month');

@@ -1,0 +1,71 @@
+<?php require('Views/template/header.phtml') ?>
+
+<!-- Main Content Container -->
+<div class="container-fluid flex-grow-1 py-4">
+    <div class="row justify-content-center h-100">
+        <div class="col-md-8 col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="card shadow-sm w-100">
+                <div class="card-header bg-primary text-white py-3">
+                    <h3 class="mb-0 fs-5">Edit Charge Point</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" enctype="multipart/form-data">
+                        <input type="hidden" name="point_id" value="<?= $view->chargePoint['point_id'] ?>">
+                        <input type="hidden" name="existing_image" value="<?= $view->chargePoint['image_path'] ?>">
+
+                        <!-- Form Fields -->
+                        <div class="mb-3">
+                            <label for="address" class="form-label small">Address *</label>
+                            <textarea class="form-control form-control-sm" id="address" name="address" rows="2" required><?= htmlspecialchars($view->chargePoint['address']) ?></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="postcode" class="form-label small">Postcode *</label>
+                            <input type="text" class="form-control form-control-sm" id="postcode" name="postcode" value="<?= htmlspecialchars($view->chargePoint['postcode']) ?>" required>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label for="latitude" class="form-label small">Latitude *</label>
+                                <input type="number" step="0.00000001" class="form-control form-control-sm" id="latitude" name="latitude" value="<?= $view->chargePoint['latitude'] ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="longitude" class="form-label small">Longitude *</label>
+                                <input type="number" step="0.00000001" class="form-control form-control-sm" id="longitude" name="longitude" value="<?= $view->chargePoint['longitude'] ?>" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="price" class="form-label small">Price per kWh (£) *</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="price" name="price" value="<?= $view->chargePoint['price'] ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="availability" class="form-label small">Availability</label>
+                            <select class="form-select form-select-sm" id="availability" name="availability">
+                                <option value="Available" <?= $view->chargePoint['availability'] === 'Available' ? 'selected' : '' ?>>Available</option>
+                                <option value="Unavailable" <?= $view->chargePoint['availability'] === 'Unavailable' ? 'selected' : '' ?>>Unavailable</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label small">Charge Point Image</label>
+                            <input type="file" class="form-control form-control-sm" id="image" name="image">
+                            <?php if ($view->chargePoint['image_path']): ?>
+                                <div class="mt-2">
+                                    <img src="<?= htmlspecialchars($view->chargePoint['image_path']) ?>" class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" name="edit-f" class="btn btn-success px-5">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php require('Views/template/footer.phtml') ?>

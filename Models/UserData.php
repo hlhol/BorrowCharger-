@@ -43,6 +43,14 @@ class UserData {
     $stmt = $this->conn->query("SELECT COUNT(*) FROM users");
     return (int)$stmt->fetchColumn();
     }
+    
+    
+    public function PendHomeowner(): int {
+    $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM users WHERE role = 'Homeowner' AND status = 'Pending'");
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return (int)$result['count'];
+    }
 
     public function fetchAll() {
         
@@ -63,7 +71,7 @@ class UserData {
     
     
     public function approveUser($id) {
-    $stmt = $this->conn->prepare("UPDATE users SET status = 'approved' WHERE user_id = ?");
+    $stmt = $this->conn->prepare("UPDATE users SET status = 'Active' WHERE user_id = ?");
     $stmt->execute([$id]);
     }
 

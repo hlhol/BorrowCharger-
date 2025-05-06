@@ -25,18 +25,34 @@
                     <?= ucfirst(htmlspecialchars($user->getStatus())) ?>
                 </span>
             </td>
-            <td class="text-center">
-               <?php
+     <td class="text-center">
+     <?php
         $actions = [];
 
-        $actions[] = '<a href="manage_users_action.php?action=approve&id=' . $user->getId() . '" class="text-success text-decoration-none">Approve</a>';
-        $actions[] = '<a href="manage_users_action.php?action=suspend&id=' . $user->getId() . '" class="text-warning text-decoration-none">Suspend</a>';
-        $actions[] = '<a href="manage_users_action.php?action=delete&id=' . $user->getId() . '" class="text-danger text-decoration-none" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+    $userId = $user->getId();
 
-        echo implode(' | ', $actions);
-    ?>
+    $actions[] = '<form method="POST" action="ManageU.php" style="display:inline;">
+    <input type="hidden" name="action" value="approve">
+    <input type="hidden" name="id" value="' . $userId . '">
+    <button type="submit" class="btn btn-link text-success text-decoration-none p-0 m-0">Approve</button>
+    </form>';
 
+    $actions[] = '<form method="POST" action="ManageU.php" style="display:inline;">
+    <input type="hidden" name="action" value="suspend">
+    <input type="hidden" name="id" value="' . $userId . '">
+    <button type="submit" class="btn btn-link text-warning text-decoration-none p-0 m-0">Suspend</button>
+    </form>';
 
+    $actions[] = '<form method="POST" action="ManageU.php" style="display:inline;" onsubmit="return confirm(\'Are you sure you want to delete this user?\')">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="id" value="' . $userId . '">
+    <button type="submit" class="btn btn-link text-danger text-decoration-none p-0 m-0">Delete</button>
+    </form>';
+
+echo implode(' | ', $actions);
+?>
+
+                
             </td>
         </tr>
     <?php endforeach; ?>

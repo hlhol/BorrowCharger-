@@ -3,7 +3,7 @@
 <div class="container my-5">
     <h2 class="fw-bold mb-4 text-center">Manage Charge Points</h2>
 
-    <a href="/chargepoints/create" class="btn btn-success mb-3">Add New Charge Point</a>
+    <!-- <a href="/chargepoints/create" class="btn btn-success mb-3">Add New Charge Point</a> -->
 
     <div class="table-responsive shadow-sm">
         <table class="table table-bordered align-middle table-striped">
@@ -34,26 +34,36 @@
 <?php else: ?>
     N/A
 <?php endif; ?>
-                        <td class="text-center">
+    
+                        </td>
+                        <td>
            <?php
-    $actions = [];
+        $actions = [];
 
-    $actions[] = '<a href="manage_users_action.php?action=approve&id=' . $cpModel->getId() . '" class="text-success text-decoration-none">Add</a>';
-    $actions[] = '<a href="manage_users_action.php?action=suspend&id=' . $cpModel->getId() . '" class="text-warning text-decoration-none">Edit</a>';
-    $actions[] = '<a href="manage_users_action.php?action=delete&id=' . $cpModel->getId() . '" class="text-danger text-decoration-none" onclick="return confirm(\'Are you sure?\')">Delete</a>';
+    $userId = $cpModel->getId();
+
+    $actions[] = '<form method="POST" action="Mangement.php" style="display:inline;">
+    <input type="hidden" name="action" value="edit">
+    <input type="hidden" name="id" value="' . $userId . '">
+    <button type="submit" class="btn btn-link text-success text-decoration-none p-0 m-0">Edit</button>
+    </form>';
+
+    $actions[] = '<form method="POST" action="Mangement.php" style="display:inline;">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="id" value="' . $userId . '">
+    <button type="submit" class="btn btn-link text-warning text-decoration-none p-0 m-0">Delete</button>
+    </form>';
 
     echo implode(' | ', $actions);
-?>
-
-
-        </td>
-                    </tr>
-                <?php endforeach ?>
+    ?>
+    </td>
+    </tr>
+    <?php endforeach ?>
             </tbody>
         </table>
     </div>
 
-    <!-- Optional Pagination (if you have a large number of charge points) -->
+    <!-- Optional Pagination (if there are large number of charge points) -->
     <?php if (count($view->chargePoints ?? []) > 10): ?>
         <div class="pagination">
             <a href="?page=1" class="btn btn-outline-primary btn-sm">First</a>

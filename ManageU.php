@@ -19,30 +19,30 @@ if (isset($_SESSION['user_role'])) {
 
         // Handle user actions (approve, suspend, delete)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['action']) && isset($_POST['id'])) {
-                $userId = (int)$_POST['id'];
-                $action = $_POST['action'];
-                
-                 switch ($action) {
+        if (isset($_POST['action']) && isset($_POST['id'])) {
+        $userId = (int)$_POST['id'];
+        $action = $_POST['action'];
+        
+        switch ($action) {
             case 'approve':
-                $userData->approveUser($id);
+                $userData->approveUser($userId);
                 $_SESSION['flash_message'] = "User approved successfully.";
                 break;
 
             case 'suspend':
-                $userData->suspendUser($id);
+                $userData->suspendUser($userId);
                 $_SESSION['flash_message'] = "User suspended successfully.";
                 break;
 
             case 'delete':
-                $userData->deleteUser($id);
+                $userData->deleteUser($userId);
                 $_SESSION['flash_message'] = "User deleted successfully.";
                 break;
-             }
-                header('Location: ManageU.php');
-                exit;
-            }
         }
+            header('Location: ManageU.php');
+            exit;
+        }
+    }
 
         
 
