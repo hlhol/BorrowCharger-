@@ -126,10 +126,25 @@ public function create(int $ownerId, array $data): bool {
        return $results;
    }
 
-    
-    
-    
-    public function countAllChargePoints(): int {
+   public function fetchFilter(array $data){
+       $stmt = $this->conn->prepare(
+         "SELECT * FROM charge_points WHERE "
+                 
+       );
+       
+       $result  = [];
+       while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+           $results[] = new cpModel($row);
+       }
+       return $results;
+   }
+
+
+
+
+
+
+   public function countAllChargePoints(): int {
     $stmt = $this->conn->prepare(
         "SELECT COUNT(*) FROM charge_points"  // This counts all charge points, not just available ones
     );

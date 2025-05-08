@@ -46,7 +46,11 @@ class HomeOwner {
         if (!$existingData) {
             return ['error' => 'Charge point not found.'];
         }
-
+         
+        if($data['price'] > 500){
+             return ['error' => 'Maximum price is 500'];
+        }
+        
         $success = $this->chargePointData->update($pointID, $userID, $data);
         return $success 
             ? ['success' => 'Charge point updated!'] 
@@ -67,6 +71,10 @@ class HomeOwner {
             if (empty($data[$field])) {
                 return ['error' => "Missing $field"];
             }
+        }
+        
+        if($data['price'] > 500){
+             return ['error' => 'Maximum price is 500'];
         }
 
         $success = $this->chargePointData->create($ownerID, $data);
