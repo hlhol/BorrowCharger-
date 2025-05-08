@@ -44,28 +44,6 @@
 
 <div id="map" style="height: 500px; width: 100%;"></div>
 
-<script>
-    window.chargePoints = <?= json_encode(array_map(function($cp) {
-        return [
-            'latitude' => $cp->getLatitude(),
-            'longitude' => $cp->getLongitude(),
-            'address' => htmlspecialchars($cp->getAddress(), ENT_QUOTES),
-            'price' => $cp->getPrice(),
-            'availability' => htmlspecialchars($cp->getAvailability(), ENT_QUOTES),
-        ];
-    }, $chargePoints ?? [])); ?>;
-</script>
-
-<script>
-    // Range Slider Update
-    const priceRange = document.getElementById('priceRange');
-    const priceValue = document.getElementById('priceValue');
-    
-    priceRange.addEventListener('input', function() {
-        priceValue.textContent = `0 - ${this.value}`;
-        // Add your filter logic here
-    });
-</script>
 
 <script src="public/js/map/map.js"></script>
 
