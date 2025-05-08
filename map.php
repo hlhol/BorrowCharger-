@@ -11,4 +11,11 @@ $chargePoint = new ChargePointData($conn);
 $chargePoints = $chargePoint->fetchAll();
 
 // Pass data to view
-require_once 'Views/RentalUser/Map.phtml';
+
+if(  $_SESSION['login'] == true &&  $_SESSION['user_role'] == 'User' && $_SESSION['AcStatus'] == 'Active'){
+    require_once 'Views/RentalUser/Map.phtml';
+}else {
+    header('Location: login.php');
+    exit();
+}
+

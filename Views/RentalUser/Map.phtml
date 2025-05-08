@@ -1,4 +1,47 @@
 <?php require('Views/template/header.phtml'); ?>
+
+<div id="searchFilter" class="container my-4">
+    <div class="row g-3">
+        <!-- Search Input -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">Search by name:</label>
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control" 
+                       id="searchInput" 
+                       placeholder="Search by address...">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Availability Filter -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">Availability</label>
+            <select class="form-select" id="availabilitySelect">
+                <option value="">All Statuses</option>
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+            </select>
+        </div>
+         <!-- Price Range Slider -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="form-label">Price Range: £<span id="priceValue">0 - 500</span></label>
+            <div class="d-flex align-items-center">
+                <input type="range" 
+                       class="form-range" 
+                       id="priceRange" 
+                       min="0" 
+                       max="500" 
+                       step="1"
+                       value="500">
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <div id="map" style="height: 500px; width: 100%;"></div>
 
 <script>
@@ -11,6 +54,17 @@
             'availability' => htmlspecialchars($cp->getAvailability(), ENT_QUOTES),
         ];
     }, $chargePoints ?? [])); ?>;
+</script>
+
+<script>
+    // Range Slider Update
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    
+    priceRange.addEventListener('input', function() {
+        priceValue.textContent = `0 - ${this.value}`;
+        // Add your filter logic here
+    });
 </script>
 
 <script src="public/js/map/map.js"></script>
