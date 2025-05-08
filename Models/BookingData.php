@@ -49,6 +49,30 @@ public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array
     }
 
 
+    
+    public function createBooking(
+    int $userId,
+    int $pointId,
+    string $startDateTime,
+    string $endDateTime,
+    float $durationHours,
+    float $totalPrice,
+    string $status = 'Pending' ): bool {
+    $stmt = $this->conn->prepare("
+        INSERT INTO bookings 
+        (user_id, point_id, start_datetime, end_datetime, duration_hours, total_price, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+    return $stmt->execute([
+        $userId,
+        $pointId,
+        $startDateTime,
+        $endDateTime,
+        $durationHours,
+        $totalPrice,
+        $status
+    ]);
+}
     public function getMonthlyBookingStats(): array {
     $stmt = $this->conn->prepare("
         SELECT DATE_FORMAT(start_datetime, '%b') AS month, COUNT(*) AS total
