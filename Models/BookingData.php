@@ -9,9 +9,37 @@ class BookingData {
         $this->conn = $conn;
     }
     
-    public function getAllBokkingByUser(int $BookrID){
-        
+    public function getAllBookingByUser(int $userId, int $limit = 10, int $offset = 0): array {
+        $sql = "SELECT * FROM Bookings WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+        $stm = $this->conn->prepare($sql);
+        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stm->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stm->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stm->execute();
+
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    public function countBookingsByUser(int $userId): int {
+        $sql = "SELECT COUNT(*) FROM Bookings WHERE user_id = :userId";
+        $stm = $this->conn->prepare($sql);
+        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stm->execute();
+
+        return (int)$stm->fetchColumn();
+    }
+
+    
+    public function getUserDetails(String $username) {
+    
+    $stm = $this->conn->prepare("SELECT * FROM Users WHERE username = :username AND role = :role");
+    $stm->bindValue(':username', $username, PDO::PARAM_STR);
+    $stm->bindValue(':role', 'User', PDO::PARAM_STR);  
+    $stm->execute();
+
+    return $stm->fetch(PDO::FETCH_ASSOC);
+}
+
 
 public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
     $stmt = $this->conn->prepare(

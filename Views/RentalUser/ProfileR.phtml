@@ -1,17 +1,73 @@
 <?php require('Views/template/header.phtml') ?>
 
-<div class="container mt-4">
-    <div>
-        <h1>User Details:</h1>
-        <p>username</p>
-        <p>Email</p>
-        <p>First Name</p>
-        <p>status</p>
+<div class="container mt-5">
+    <!-- User Details -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">User Details</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Username:</strong> <?= htmlspecialchars($view->userDetail['username']) ?></p>
+            <p><strong>Email:</strong> <?= htmlspecialchars($view->userDetail['email']) ?></p>
+            <p><strong>First Name:</strong> <?= htmlspecialchars($view->userDetail['fname']) ?></p>
+            <p><strong>Status:</strong> <?= htmlspecialchars($view->userDetail['status']) ?></p>
+        </div>
     </div>
-    
-    <div>
-        <h1>Your History Booking</h1>
-        
+
+    <!-- Booking History -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">Your Booking History</h4>
+        </div>
+        <div class="card-body">
+            <?php if (!empty($view->BookingReq)) : ?>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($view->BookingReq as $booking) : ?>
+                            <tr>
+                                <td><?= htmlspecialchars($booking['booking_id']) ?></td>
+                                <td><?= htmlspecialchars(date('Y-m-d h:i A', strtotime($booking['start_datetime'])) . ' to ' . date('h:i A', strtotime($booking['end_datetime']))); ?></td>
+                                <td><?= htmlspecialchars($booking['status']) ?></td>
+                                <td><?= htmlspecialchars(number_format($booking['total_price'], 2)); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <?php if ($view->currentPage > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $view->currentPage - 1 ?>">Previous</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $view->totalPages; $i++): ?>
+                            <li class="page-item <?= $i == $view->currentPage ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($view->currentPage < $view->totalPages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<?= $view->currentPage + 1 ?>">Next</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            <?php else : ?>
+                <p class="text-muted">You have no booking history yet.</p>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 
