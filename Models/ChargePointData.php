@@ -68,6 +68,47 @@ public function create(int $ownerId, array $data): bool {
             $ownerId
         ]);
     }
+    
+    public function fetchFiltered(array $filters) {
+    $query = "SELECT point_id, address, postcode, latitude, longitude, availability, price, image_path FROM charge_points";
+    $conditions = [];
+    $params = [];
+
+    // Search filter (address or postcode)
+    if (!empty($filters['search'])) {
+        $conditions[] = "(address LIKE :search OR postcode LIKE :search)";
+        $params[':search'] = '%' . $filters['search'] . '%';
+    }
+
+    // Availability filter
+    if (!empty($filters['availability'])) {
+        $conditions[] = "availability = :availability";
+        $params[':availability'] = $filters['availability'];
+    }
+
+    // Max price filter
+    if (isset($filters['maxPrice']) && $filters['maxPrice'] !== null) {
+        $conditions[] = "price <= :maxPrice";
+        $params[':maxPrice'] = $filters['maxPrice'];
+    }
+
+    // Combine conditions
+    if (!empty($conditions)) {
+        $query .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $stmt = $this->conn->prepare($query);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+
+    $stmt->execute();
+    $results = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $results[] = new cpModel($row);
+    }
+    return $results;
+}
 
     public function delete(int $pointId, int $ownerId): bool {
         $stmt = $this->conn->prepare(

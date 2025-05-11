@@ -1,5 +1,4 @@
 const map = L.map('map').setView([53.483710, -2.270110], 13);
-
 const availableIcon = L.icon({
     iconUrl: 'lib/leaflet/images/marker-icon.png',
     shadowUrl: 'lib/leaflet/images/marker-icon.png',
@@ -7,7 +6,6 @@ const availableIcon = L.icon({
     iconAnchor: [12, 41],
     popupAnchor: [1, -34]
 });
-
 const unavailableIcon = L.icon({
     iconUrl: 'lib/leaflet/images/marker-icon-red.png',
     shadowUrl: 'lib/leaflet/images/marker-icon-red.png',
@@ -15,7 +13,6 @@ const unavailableIcon = L.icon({
     iconAnchor: [12, 41],
     popupAnchor: [1, -34]
 });
-
 const userIcon = L.icon({
     iconUrl: 'lib/leaflet/images/marker-icon-green.png',
     shadowUrl: 'lib/leaflet/images/marker-icon-green.png',
@@ -33,14 +30,13 @@ let markerObjects = {};
 let userLocation = null;
 let userMarker = null;
 
-
 function createOrUpdateMarker(cp) {
     const icon = cp.availability === 'Available' ? availableIcon : unavailableIcon;
     const markerId = String(cp.id);
     
-    let popupContent = `
+    const popupContent = `
         <b>Address:</b> ${cp.address}<br>
-        <b>Price:</b> £${parseFloat(cp.price).toFixed(2)}/kWh<br>
+        <b>Price:</b> ${parseFloat(cp.price).toFixed(3)} BHD/kWh<br>
         <b>Status:</b> ${cp.availability}
     `;
 
@@ -73,8 +69,9 @@ function updateUserPosition(position) {
     }
     
     map.setView([userLocation.lat, userLocation.lng], 13);
-    updateMarkers(); 
+    updateMarkers();
 }
+
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
         updateUserPosition,
@@ -83,17 +80,39 @@ if (navigator.geolocation) {
     );
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    
+    priceValue.textContent = `0.000 - ${(priceRange.value / 1000).toFixed(3)} BHD`;
+    
+    priceRange.addEventListener('input', function() {
+        priceValue.textContent = `0.000 - ${(this.value / 1000).toFixed(3)} BHD`;
+        updateMarkers();
+    });
+        document.getElementById('searchInput').addEventListener('input', updateMarkers);
+    document.getElementById('availabilitySelect').addEventListener('change', updateMarkers);
+});
+
 function updateMarkers() {
-    fetch('Models/chargepointsAjax.php')
+    const searchTerm = document.getElementById('searchInput').value;
+    const availability = document.getElementById('availabilitySelect').value;
+    const maxPrice = (document.getElementById('priceRange').value / 1000).toFixed(3); 
+
+    const params = new URLSearchParams({
+        search: searchTerm,
+        availability: availability,
+        maxPrice: maxPrice
+    });
+
+    fetch(`Models/chargepointsAjax.php?${params}`)
         .then(response => {
-            if (!response.ok) throw new Error('Network error');
+            if (!response.ok) throw new Error('network error');
             return response.json();
         })
         .then(data => {
             if (!Array.isArray(data)) return;
-
             const newMarkerIds = new Set();
-
             data.forEach(cp => {
                 if (cp?.id && cp?.latitude && cp?.longitude) {
                     const markerId = String(cp.id);
@@ -108,15 +127,8 @@ function updateMarkers() {
                 }
             });
         })
-        .catch(error => console.error('error:', error));
+        .catch(error => console.error('Error:', error));
 }
 
-if (window.chargePoints && Array.isArray(window.chargePoints)) {
-    window.chargePoints.forEach(cp => {
-        if (cp?.id && cp?.latitude && cp?.longitude) {
-            createOrUpdateMarker(cp);
-        }
-    });
-}
 updateMarkers();
-setInterval(updateMarkers, 20000);
+setInterval(updateMarkers, 2000); 

@@ -4,7 +4,7 @@
     <div class="row g-3">
         <!-- Search Input -->
         <div class="col-12 col-md-6 col-lg-4">
-            <label class="form-label">Search by name:</label>
+            <label class="form-label">Search by address:</label>
             <div class="input-group">
                 <input type="text" 
                        class="form-control" 
@@ -25,25 +25,24 @@
                 <option value="Unavailable">Unavailable</option>
             </select>
         </div>
-         <!-- Price Range Slider -->
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="form-label">Price Range: £<span id="priceValue">0 - 500</span></label>
-            <div class="d-flex align-items-center">
-                <input type="range" 
-                       class="form-range" 
-                       id="priceRange" 
-                       min="0" 
-                       max="500" 
-                       step="1"
-                       value="500">
-            </div>
-        </div>
 
+        <!-- Price Range Slider -->
+       <div class="col-12 col-md-6 col-lg-4">
+    <label class="form-label">Max Price/kWh: <span id="priceValue">0.000 - 50.000 BHD</span></label>
+    <div class="d-flex align-items-center">
+        <input type="range" 
+               class="form-range" 
+               id="priceRange" 
+               min="0" 
+               max="50000" 
+               step="100"   <!-- Changed step from 0.1 to 100 -->
+               value="50000">
+    </div>
+</div>
     </div>
 </div>
 
 <div id="map" style="height: 500px; width: 100%;"></div>
-
 
 <script src="public/js/map/map.js"></script>
 
