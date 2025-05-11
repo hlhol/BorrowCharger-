@@ -1,39 +1,12 @@
 <?php require('Views/template/header.phtml') ?>
 
 <script>
-    <script>
-    const usageOverTime = <?= $view->usageOverTime ?>;
-    const chargerStatusOverview = <?= $view->chargerStatusOverview ?>;
-    // Area Chart - Usage Over Time
-    const ctxArea = document.getElementById("myAreaChart").getContext("2d");
-    new Chart(ctxArea, {
-        type: 'line',
-        data: {
-            labels: usageOverTime.labels,
-            datasets: [{
-                label: 'Bookings',
-                data: usageOverTime.data,
-                borderColor: 'rgba(75,192,192,1)',
-                backgroundColor: 'rgba(75,192,192,0.2)',
-                fill: true
-            }]
-        }
-    });
-
-    // Bar Chart - Charger Status Overview
-    const ctxBar = document.getElementById("myBarChart").getContext("2d");
-    new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-            labels: chargerStatusOverview.labels,
-            datasets: [{
-                label: 'Chargers',
-                data: chargerStatusOverview.data,
-                backgroundColor: ['#28a745', '#dc3545', '#ffc107']
-            }]
-        }
-    });
+    window.dashboardData = {
+        usageOverTime: <?= json_encode($view->usageOverTime ?? []) ?>,
+        chargerStatusOverview: <?= json_encode($view->chargerStatusOverview ?? []) ?>
+    };
 </script>
+
 
 
 <div id="layoutSidenav_content">
@@ -79,17 +52,17 @@
             </div>
             
         </div>
-
+ 
         <!-- Charts Section -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="card shadow mb-4">
                     <div class="card-header">
                         <i class="fas fa-chart-area me-1"></i>
-                        Usage Over Time
+                        Top 3 chargepoint booked
                     </div>
                     <div class="card-body">
-                        <canvas id="myAreaChart" width="100%" height="40"></canvas>
+                        <div id="myAreaChart"></div>
                     </div>
                 </div>
             </div>
@@ -100,12 +73,14 @@
                         Charger Status Overview
                     </div>
                     <div class="card-body">
-                        <canvas id="myBarChart" width="100%" height="40"></canvas>
+                        <div id="myBarChart"></div>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 </div>
 
+<script src="public/js/Admin/dashBoard.js"></script>
 <?php require('Views/template/footer.phtml') ?>

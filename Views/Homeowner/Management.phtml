@@ -80,9 +80,9 @@
                                     <p><strong>End:</strong> <?= $book['end_datetime'] ?></p>
                                     <p><strong>Duration:</strong> <?= $book['duration_hours'] ?> hrs</p>
                                     <p><strong>Total:</strong> £<?= $book['total_price'] ?></p>
-                                    <p><strong>Status:</strong> <?= $book['STATUS'] ?></p>
+                                    <p><strong>Status:</strong> <?= $book['status'] ?></p>
 
-                                    <?php if ($book['STATUS'] === 'Pending'): ?>
+                                    <?php if ($book['status'] === 'Pending'): ?>
                                         <form method="POST" action="Mangement.php" class="d-flex gap-2 justify-content-center">
                                             <input type="hidden" name="booking_id" value="<?= $book['booking_id'] ?>">
                                             <button type="submit" name="action" value="accept" 

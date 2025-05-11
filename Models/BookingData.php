@@ -9,6 +9,74 @@ class BookingData {
     public function __construct(PDO $conn) {
         $this->conn = $conn;
     }
+    
+    public function getNumBooking($username) {
+        // validate the role
+        $roleSql = "SELECT role FROM Users WHERE username = :username LIMIT 1";
+        $roleStmt = $this->conn->prepare($roleSql);
+        $roleStmt->bindParam(':username', $username, PDO::PARAM_STR);
+        $roleStmt->execute();
+        $user = $roleStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || $user['role'] !== 'Admin') {
+            return ['error' => 'Unauthorized: Only Admins can access booking statistics.'];
+        }
+
+        // get data
+        $sql = "
+            SELECT 
+                charge_points.point_id, 
+                charge_points.address,
+                COUNT(bookings.booking_id) AS booking_count
+            FROM 
+                bookings
+            JOIN 
+                charge_points ON bookings.point_id = charge_points.point_id
+            GROUP BY 
+                charge_points.point_id
+            ORDER BY 
+                booking_count DESC
+            LIMIT 3
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    
+    public function getAllBookingByUser(int $userId, int $limit = 10, int $offset = 0): array {
+        $sql = "SELECT * FROM Bookings WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+        $stm = $this->conn->prepare($sql);
+        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stm->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stm->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stm->execute();
+
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function countBookingsByUser(int $userId): int {
+        $sql = "SELECT COUNT(*) FROM Bookings WHERE user_id = :userId";
+        $stm = $this->conn->prepare($sql);
+        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stm->execute();
+
+        return (int)$stm->fetchColumn();
+    }
+
+    
+    public function getUserDetails(String $username) {
+    
+    $stm = $this->conn->prepare("SELECT * FROM Users WHERE username = :username AND role = :role");
+    $stm->bindValue(':username', $username, PDO::PARAM_STR);
+    $stm->bindValue(':role', 'User', PDO::PARAM_STR);  
+    $stm->execute();
+
+    return $stm->fetch(PDO::FETCH_ASSOC);
+}
 
     public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
     $stmt = $this->conn->prepare(
@@ -89,4 +157,6 @@ class BookingData {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+
 }
+    

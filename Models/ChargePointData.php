@@ -110,6 +110,31 @@ public function create(int $ownerId, array $data): bool {
     return $results;
 }
 
+
+
+
+    public function getAvailabilityPercentages(): array {
+        $total = $this->countAllChargePoints();
+        $percentages = [
+            'Available' => 0,
+            'Unavailable' => 0
+        ];
+
+        if ($total === 0) {
+            return $percentages;
+        }
+
+        $stats = $this->getAvailabilityStats();
+
+        foreach ($stats as $stat) {
+            $availability = $stat['availability'];
+            $count = $stat['count'];
+            $percentages[$availability] = round(($count / $total) * 100, 2);
+        }
+
+        return $percentages;
+    }
+    
     public function delete(int $pointId, int $ownerId): bool {
         $stmt = $this->conn->prepare(
             "DELETE FROM charge_points WHERE point_id = ? AND user_id = ?"
