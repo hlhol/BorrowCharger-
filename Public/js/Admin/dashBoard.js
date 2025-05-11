@@ -127,5 +127,5 @@ function createTopChargePointsChart() {
 //call teh function to create he charts 
 document.addEventListener('DOMContentLoaded', () => {
     createBarChart(); 
-    createTopChargePointsChart(
+    createTopChargePointsChart();
 });
