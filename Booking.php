@@ -19,10 +19,20 @@ $db = new Database();
         $bookingData = new BookingData($conn);
         $view->chargePoints = $cpModel->fetchAll();
         
+          // Prepare prices data for JavaScript
+        $pricesData = [];
+        foreach ($view->chargePoints as $point) {
+            $pricesData[$point->getId()] = $point->getPrice();
+        }
         
+        // Pass prices to JavaScript
+        echo "<script>const chargePointPrices = " . json_encode($pricesData) . ";</script>";
+  
 }
-          
-  }
+}
+   
+// Apply filters
+$filteredPoints = $view->chargePoints ?? []; // Use the chargePoints from view
 
 // Conditional view logic
 if (isset($_GET['view']) && $_GET['view'] === 'contact') {
@@ -30,15 +40,16 @@ if (isset($_GET['view']) && $_GET['view'] === 'contact') {
     exit; // Stop further execution so Booking view doesn’t load
 }
 
-
+if (isset($_GET['view']) && $_GET['view'] === 'back') {
+    require_once('Views/RentalUser/Booking.phtml');
+    exit; // Stop further execution so Booking view doesn’t load
+}
 // Get filters from query string
 $location = $_GET['location'] ?? '';
 $priceRange = $_GET['price'] ?? '';
 $availability = $_GET['availability'] ?? '';
 $search = $_GET['search'] ?? '';
 
-// Apply filters
-$filteredPoints = $view->chargePoints ?? []; // Use the chargePoints from view
 
 
 if ($isAjax) {
@@ -46,21 +57,20 @@ if ($isAjax) {
     exit;
 }
 
-// Apply location filter
-if (!empty($location)) {
-    $filteredPoints = array_filter($filteredPoints, function($point) use ($location) {
-        return stripos($point->getAddress(), $location) !== false;
+// Apply availability filter
+if (!empty($availability)) {
+    $filteredPoints = array_filter($filteredPoints, function($point) use ($availability) {
+        return $point->getAvailability() === $availability;
     });
 }
 
-// Apply price sorting - using $priceRange instead of $price
-if ($priceRange === 'Low_to_High') {
-    usort($filteredPoints, function($a, $b) {
-        return $a->getPrice() <=> $b->getPrice();
-    });
-} elseif ($priceRange === 'High_to_Low') {
-    usort($filteredPoints, function($a, $b) {
-        return $b->getPrice() <=> $a->getPrice();
+// Apply price range filter
+$price_range = $_GET['price_range'] ?? '';
+if (!empty($price_range)) {
+    list($min_price, $max_price) = explode('-', $price_range);
+    $filteredPoints = array_filter($filteredPoints, function($point) use ($min_price, $max_price) {
+        $price = $point->getPrice();
+        return $price >= $min_price && $price <= $max_price;
     });
 }
 
@@ -71,7 +81,12 @@ if (!empty($search)) {
     });
 }
 
-// Update the view with filtered points
-$view->chargePoints = $filteredPoints;
+// Apply general search filter (searches both address and postcode)
+if (!empty($search)) {
+    $filteredPoints = array_filter($filteredPoints, function($point) use ($search) {
+        return stripos($point->getAddress(), $search) !== false || 
+               stripos($point->getPostcode(), $search) !== false;
+    });
+}
 
 require_once('Views/RentalUser/Booking.phtml');

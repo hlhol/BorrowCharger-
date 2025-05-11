@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Models/Database.php';
+require_once 'Models/ChargePointData.php';
 
 class BookingData {
     private $conn;
@@ -8,40 +9,8 @@ class BookingData {
     public function __construct(PDO $conn) {
         $this->conn = $conn;
     }
-    
-    public function getAllBookingByUser(int $userId, int $limit = 10, int $offset = 0): array {
-        $sql = "SELECT * FROM Bookings WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
-        $stm = $this->conn->prepare($sql);
-        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stm->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stm->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $stm->execute();
 
-        return $stm->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
-    public function countBookingsByUser(int $userId): int {
-        $sql = "SELECT COUNT(*) FROM Bookings WHERE user_id = :userId";
-        $stm = $this->conn->prepare($sql);
-        $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
-        $stm->execute();
-
-        return (int)$stm->fetchColumn();
-    }
-
-    
-    public function getUserDetails(String $username) {
-    
-    $stm = $this->conn->prepare("SELECT * FROM Users WHERE username = :username AND role = :role");
-    $stm->bindValue(':username', $username, PDO::PARAM_STR);
-    $stm->bindValue(':role', 'User', PDO::PARAM_STR);  
-    $stm->execute();
-
-    return $stm->fetch(PDO::FETCH_ASSOC);
-}
-
-
-public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
+    public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
     $stmt = $this->conn->prepare(
         "SELECT b.*, u.username AS booked_by, cp.address 
          FROM Bookings b
@@ -82,28 +51,31 @@ public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array
 
 
     
-    public function createBooking(
-    int $userId,
-    int $pointId,
-    string $startDateTime,
-    string $endDateTime,
-    float $durationHours,
-    float $totalPrice,
-    string $status = 'Pending' ): bool {
-    $stmt = $this->conn->prepare("
-        INSERT INTO bookings 
-        (user_id, point_id, start_datetime, end_datetime, duration_hours, total_price, status, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-    ");
-    return $stmt->execute([
-        $userId,
-        $pointId,
-        $startDateTime,
-        $endDateTime,
-        $durationHours,
-        $totalPrice,
-        $status
-    ]);
+   public function createBooking(int $userId, int $pointId, array $data): bool {
+    try {
+        $stmt = $this->conn->prepare("
+            INSERT INTO bookings 
+            (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price, created_at)
+            VALUES (?, ?, ?, ?,'Pending', ?, ?, NOW())
+        ");
+        
+        $status = 'Pending'; // Fixed status
+        
+        return $stmt->execute([
+            $userId,
+            $pointId,
+            $data['startDateTime'],
+            $data['endDateTime'],
+            $status,
+            $data['durationHours'],
+            $data['totalPrice'],
+            
+        ]);
+        
+    } catch (Exception $ex) {
+        error_log("Database error: " . $ex->getMessage());
+        return false;
+    }
 }
     public function getMonthlyBookingStats(): array {
     $stmt = $this->conn->prepare("

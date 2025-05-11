@@ -97,6 +97,8 @@ VALUES (
     'Available'
 );
 
+
+
 INSERT INTO Bookings (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price)
 VALUES (
     3,                 -- user_id (the User)
