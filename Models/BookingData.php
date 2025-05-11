@@ -8,6 +8,10 @@ class BookingData {
     public function __construct(PDO $conn) {
         $this->conn = $conn;
     }
+    
+    public function getAllBokkingByUser(int $BookrID){
+        
+    }
 
 public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
     $stmt = $this->conn->prepare(
