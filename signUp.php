@@ -5,6 +5,11 @@ $view->pageTitle = 'Sign UP';
 
 require_once('Models/signUp.php');
 
+function isStrong($password) {
+    return (bool) preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$/', $password);
+}
+
+
 $username = $email = $password = $role = $name = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
@@ -22,6 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     
 
     if (!empty($username) && !empty($email) && !empty($password) && !empty($role) && !empty($name)) {
+        if(!isStrong($password)){
+                $view->message = "password must include uppercase,lowercase,num and special charcter";
+                require_once('Views/signUp.phtml');
+                exit;
+        };
+        
         $user = new User();
         $result = $user->register($username, $email, $password, $role, $name,  $status);
 
