@@ -85,34 +85,4 @@ if (!empty($search)) {
     });
 }
 
-// LOCATION FILTER (after other filters like availability, search, price)
-$location = $_GET['location'] ?? ''; //"4", "10", "20"
-
-if (!empty($location)) {
-    $userLat = $_SESSION['user_lat'] ?? null;
-    $userLng = $_SESSION['user_lng'] ?? null;
-
-    if ($userLat && $userLng) {
-        $filteredPoints = array_filter($filteredPoints, function ($point) use ($userLat, $userLng, $location) {
-            $pointLat = $point->getLatitude();
-            $pointLng = $point->getLongitude();
-
-            $earthRadius = 6371; // Earth radius in km
-
-            $dLat = deg2rad($pointLat - $userLat);
-            $dLng = deg2rad($pointLng - $userLng);
-
-            $a = sin($dLat / 2) * sin($dLat / 2) +
-                 cos(deg2rad($userLat)) * cos(deg2rad($pointLat)) *
-                 sin($dLng / 2) * sin($dLng / 2);
-
-            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-            $distance = $earthRadius * $c;
-
-            return $distance <= $location;
-        });
-    }
-}
-
-//the main Booking page
 require_once('Views/RentalUser/Booking.phtml');

@@ -52,14 +52,12 @@ function filterChargePoints() {
     const search = document.getElementById('searchText').value;
     const maxPrice = document.getElementById('priceRange').value;
     const availability = document.getElementById('availabilityInput').value;
-    const location = document.getElementById('locationFilter').value;
 
     const params = new URLSearchParams({
         ajax: 'filter',
         search: search,
         maxPrice: maxPrice,
         availability: availability,
-        location: location
     });
 
     fetch(`Booking.php?${params.toString()}`, {

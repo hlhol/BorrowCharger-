@@ -17,16 +17,6 @@
 <form class="container mb-4" id="filterForm" onsubmit="filterChargePoints(); return false;">
   <div class="input-group">
 
-    <!-- Location Dropdown -->
-    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    Location
-      Location</button>
-    <ul class="dropdown-menu" aria-labelledby="locationDropdown">
-    <li><a class="dropdown-item" href="#" onclick="setLocationFilter('4')">Near to me (≤ 4 km)</a></li>
-    <li><a class="dropdown-item" href="#" onclick="setLocationFilter('10')">Near to me (≤ 10 km)</a></li>
-    <li><a class="dropdown-item" href="#" onclick="setLocationFilter('20')">Near to me (≤ 20 km)</a></li>
-  </ul>
-
  <!-- Price Range Slider -->
    <div class="btn btn-outline-secondary me-0 mb-0 d-flex align-items-center">
   <label for="priceRange" class="form-label me-2 mb-0">Price: <span id="priceValue">0-500</span> BHD</label>
