@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'Models/Database.php';
 require_once 'Models/UserData.php';
 require_once 'Models/BookingData.php';
@@ -6,87 +7,112 @@ require_once 'Models/ChargePointData.php';
 require_once 'Models/MangementH.php';
 require_once 'Models/cpModel.php';
 
-session_start();
 $view = new stdClass();
 $view->pageTitle = 'Booking';
-$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
 
-if (isset($_SESSION['user_role'])) {
-    if ($_SESSION['user_role'] === 'User') {
-$db = new Database();
-        $conn = $db->connect();
-        $cpModel = new ChargePointData($conn);
-        $bookingData = new BookingData($conn);
-        $view->chargePoints = $cpModel->fetchAll();
-        
-          // Prepare prices data for JavaScript
-        $pricesData = [];
-        foreach ($view->chargePoints as $point) {
-            $pricesData[$point->getId()] = $point->getPrice();
-        }
-        
-        // Pass prices to JavaScript
-        echo "<script>const chargePointPrices = " . json_encode($pricesData) . ";</script>";
-  
-}
-}
-   
-// Apply filters
-$filteredPoints = $view->chargePoints ?? []; // Use the chargePoints from view
+//AJAX filtering section (used by searchFilter.js)
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'filter') {
+    $database = new Database();
+    $conn = $database->connect();
+    $chargePoint = new ChargePointData($conn);
 
-// Conditional view logic
+    $filters = [
+        'search' => $_GET['search'] ?? null,
+        'availability' => $_GET['availability'] ?? null,
+        'maxPrice' => isset($_GET['maxPrice']) ? (float)$_GET['maxPrice'] : null,
+        'location' => $_GET['location'] ?? null
+    ];
+
+    $filteredPoints = $chargePoint->fetchFiltered($filters);
+
+    $view->chargePoints = $filteredPoints;
+    require 'Views/RentalUser/BookingCards.phtml';
+    exit(); //Stop further execution for AJAX
+}
+
+//Role check and data fetch
+if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'User') {
+    $db = new Database();
+    $conn = $db->connect();
+    $cpModel = new ChargePointData($conn);
+    $bookingData = new BookingData($conn);
+    $view->chargePoints = $cpModel->fetchAll();
+
+    //Pass prices to JavaScript
+    $pricesData = [];
+    foreach ($view->chargePoints as $point) {
+        $pricesData[$point->getId()] = $point->getPrice();
+    }
+    echo "<script>const chargePointPrices = " . json_encode($pricesData) . ";</script>";
+}
+
+//Optional view switching
 if (isset($_GET['view']) && $_GET['view'] === 'contact') {
     require_once('Views/RentalUser/ContactH.phtml');
-    exit; // Stop further execution so Booking view doesn’t load
+    exit();
 }
-
 if (isset($_GET['view']) && $_GET['view'] === 'back') {
     require_once('Views/RentalUser/Booking.phtml');
-    exit; // Stop further execution so Booking view doesn’t load
+    exit();
 }
-// Get filters from query string
-$location = $_GET['location'] ?? '';
-$priceRange = $_GET['price'] ?? '';
+$filteredPoints = $view->chargePoints ?? [];
+
 $availability = $_GET['availability'] ?? '';
 $search = $_GET['search'] ?? '';
+$price_range = $_GET['price'] ?? '';
 
-
-
-if ($isAjax) {
-    require('Views/RentalUser/BookingCards.phtml');
-    exit;
-}
-
-// Apply availability filter
+//Availability filter
 if (!empty($availability)) {
-    $filteredPoints = array_filter($filteredPoints, function($point) use ($availability) {
+    $filteredPoints = array_filter($filteredPoints, function ($point) use ($availability) {
         return $point->getAvailability() === $availability;
     });
 }
 
-// Apply price range filter
-$price_range = $_GET['price_range'] ?? '';
-if (!empty($price_range)) {
+//Price range filter (expects something like "0-500")
+if (!empty($price_range) && str_contains($price_range, '-')) {
     list($min_price, $max_price) = explode('-', $price_range);
-    $filteredPoints = array_filter($filteredPoints, function($point) use ($min_price, $max_price) {
+    $filteredPoints = array_filter($filteredPoints, function ($point) use ($min_price, $max_price) {
         $price = $point->getPrice();
         return $price >= $min_price && $price <= $max_price;
     });
 }
 
-// Apply search filter
+//Search filter (address + postcode)
 if (!empty($search)) {
-    $filteredPoints = array_filter($filteredPoints, function($point) use ($search) {
-        return stripos($point->getAddress(), $search) !== false;
-    });
-}
-
-// Apply general search filter (searches both address and postcode)
-if (!empty($search)) {
-    $filteredPoints = array_filter($filteredPoints, function($point) use ($search) {
-        return stripos($point->getAddress(), $search) !== false || 
+    $filteredPoints = array_filter($filteredPoints, function ($point) use ($search) {
+        return stripos($point->getAddress(), $search) !== false ||
                stripos($point->getPostcode(), $search) !== false;
     });
 }
 
+// LOCATION FILTER (after other filters like availability, search, price)
+$location = $_GET['location'] ?? ''; //"4", "10", "20"
+
+if (!empty($location)) {
+    $userLat = $_SESSION['user_lat'] ?? null;
+    $userLng = $_SESSION['user_lng'] ?? null;
+
+    if ($userLat && $userLng) {
+        $filteredPoints = array_filter($filteredPoints, function ($point) use ($userLat, $userLng, $location) {
+            $pointLat = $point->getLatitude();
+            $pointLng = $point->getLongitude();
+
+            $earthRadius = 6371; // Earth radius in km
+
+            $dLat = deg2rad($pointLat - $userLat);
+            $dLng = deg2rad($pointLng - $userLng);
+
+            $a = sin($dLat / 2) * sin($dLat / 2) +
+                 cos(deg2rad($userLat)) * cos(deg2rad($pointLat)) *
+                 sin($dLng / 2) * sin($dLng / 2);
+
+            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+            $distance = $earthRadius * $c;
+
+            return $distance <= $location;
+        });
+    }
+}
+
+//the main Booking page
 require_once('Views/RentalUser/Booking.phtml');

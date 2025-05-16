@@ -1,5 +1,6 @@
-<?php if (!empty($view->chargePoints)): ?>
 
+<?php if (!empty($filteredPoints)): ?>
+<?php if (!empty($view->chargePoints)): ?>
       <?php foreach ($filteredPoints as $point): ?>
         <div class="col mb-5">
           <div class="card h-100">
@@ -9,7 +10,8 @@
             <div class="card-body p-4">
               <div class="text-center">
                 <h5 class="fw-bolder"><?= $point->getAddress() ?></h5>
-                 <?= $point->getPrice() ?> BHD
+                 <?= $point->getPrice() ?> BHD <br>
+                 <?= $point->getAvailability() ?>
 
               </div>
             </div>
@@ -26,3 +28,4 @@
       <?php endforeach; ?>
         
         <?php endif; ?>
+<?php endif; ?>

@@ -244,4 +244,21 @@ public function updateChargePointByAdmin($pointID, $address, $postcode, $latitud
 }
 
 
+public function searchAddresses(string $searchTerm): array
+{
+    $sql = "SELECT DISTINCT address FROM charge_points WHERE address LIKE :term LIMIT 10";
+    $stmt = $this->conn->prepare($sql);
+    $term = $searchTerm . '%';
+    $stmt->bindParam(':term', $term, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $results = [];
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $results[] = $row['address'];
+    }
+
+    return $results;
+}
+
+
 }
