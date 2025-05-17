@@ -38,8 +38,23 @@ class UserData {
         return (int)$stmt->fetchColumn();
     }
 
-    
-     public function countAllUsers(): int {
+    public function getUserDetails(String $username, String $role) {
+
+        if ($role != "User" && $role != "Homeowner") {
+            return;
+        }
+
+        $stm = $this->conn->prepare("SELECT * FROM Users WHERE username = :username AND role = :role");
+        $stm->bindValue(':username', $username, PDO::PARAM_STR);
+        $stm->bindValue(':role', $role, PDO::PARAM_STR);  
+        $stm->execute();
+
+        return $stm->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+
+    public function countAllUsers(): int {
     $stmt = $this->conn->query("SELECT COUNT(*) FROM users");
     return (int)$stmt->fetchColumn();
     }

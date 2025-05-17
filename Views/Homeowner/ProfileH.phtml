@@ -1,6 +1,18 @@
 
 <?php require('Views/template/header.phtml') ?>
 
-<h2>profile</h2>
-
+<div class="container mt-5">
+    <!-- User Details -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Homeowner Details</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Username:</strong> <?= htmlspecialchars($view->userDetail['username']) ?></p>
+            <p><strong>Email:</strong> <?= htmlspecialchars($view->userDetail['email']) ?></p>
+            <p><strong>First Name:</strong> <?= htmlspecialchars($view->userDetail['fname']) ?></p>
+            <p><strong>Status:</strong> <?= htmlspecialchars($view->userDetail['status']) ?></p>
+        </div>
+    </div>
+</div>
 <?php require('Views/template/footer.phtml') ?>

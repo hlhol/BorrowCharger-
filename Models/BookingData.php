@@ -67,17 +67,6 @@ class BookingData {
         return (int)$stm->fetchColumn();
     }
 
-    
-    public function getUserDetails(String $username) {
-    
-    $stm = $this->conn->prepare("SELECT * FROM Users WHERE username = :username AND role = :role");
-    $stm->bindValue(':username', $username, PDO::PARAM_STR);
-    $stm->bindValue(':role', 'User', PDO::PARAM_STR);  
-    $stm->execute();
-
-    return $stm->fetch(PDO::FETCH_ASSOC);
-}
-
     public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
     $stmt = $this->conn->prepare(
         "SELECT b.*, u.username AS booked_by, cp.address 

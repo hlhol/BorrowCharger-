@@ -2,6 +2,7 @@
 
 session_start();
 require_once 'Models/BookingData.php';
+require_once 'Models/UserData.php';
 require_once 'Models/Database.php';
 
 $view = new stdClass();
@@ -9,11 +10,12 @@ $view->pageTitle = 'Profile';
 $database = new Database();
 $conn = $database->connect();
 $BookingData = new BookingData($conn);
+$user  = new UserData($conn);
 
 if (isset($_SESSION['user_role'])) {
     if ($_SESSION['user_role'] === 'User') {
         //for user details 
-        $view->userDetail = $BookingData->getUserDetails($_SESSION['username']);
+        $view->userDetail = $user->getUserDetails($_SESSION['username'], $_SESSION['user_role']);
         $userId = $view->userDetail['user_id'];
 
         //for user history of booking
@@ -27,6 +29,8 @@ if (isset($_SESSION['user_role'])) {
 
         require_once('Views/RentalUser/ProfileR.phtml');
     } elseif ($_SESSION['user_role'] === 'Homeowner') {
+        $view->userDetail = $user->getUserDetails($_SESSION['username'], $_SESSION['user_role']); // get user details:
+        
         require_once('Views/Homeowner/ProfileH.phtml');
     }
 } else { // return if he come in not correct way to the login 
