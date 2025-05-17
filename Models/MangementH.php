@@ -115,13 +115,15 @@ class HomeOwner {
         if (!$this->userData->isHomeowner($ownerID)) {
             return false;
         }
-        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Approved');
+        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Approved', $_SESSION['user_role']);
     }
 
     public function declineBooking(int $bookingID, int $ownerID): bool {
         if (!$this->userData->isHomeowner($ownerID)) {
             return false;
         }
-        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Declined');
+        return $this->bookingData->updateStatus($bookingID, $ownerID, 'Declined', $_SESSION['user_role']);
     }
+    
+    
 }
