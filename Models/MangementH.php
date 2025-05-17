@@ -48,11 +48,13 @@ class HomeOwner {
         }
          
         
+        
+    if ($data['price'] > 50.0) {
+        return ['error' => 'Maximum price is 50.000 BHD'];
+    }
+        
     
-        if ($price > 50.0) {
-            return ['error' => 'Maximum price is 50.000 BHD'];
-        }
-
+        
         $success = $this->chargePointData->update($pointID, $userID, $data);
         return $success 
             ? ['success' => 'Charge point updated!'] 

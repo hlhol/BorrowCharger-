@@ -118,30 +118,59 @@ if (isset($_SESSION['user_role'])) {
             // Edit charge point - process form
             if (isset($_POST['edit-f'])) {
                 $pointID = (int)$_POST['point_id'];
-                $formData = [
-                    'address'      => trim($_POST['address']),
-                    'postcode'     => trim($_POST['postcode']),
-                    'latitude'     => (float)$_POST['latitude'],
-                    'longitude'    => (float)$_POST['longitude'],
-                    'price'        => (float)$_POST['price'],
-                    'availability' => $_POST['availability'] ?? 'Available',
-                    'image_path'   => $_POST['existing_image'] 
-                ];
 
-                if (!empty($_FILES['image']['name'])) {
-                    $uploadResult = $homeowner->handleImageUpload($_FILES['image']);
-                    if (isset($uploadResult['error'])) {
-                        $view->error = $uploadResult['error'];
+                // Start with the existing image path (from hidden input)
+                $imagePath = $_POST['existing_image'];
+
+                // Handle file upload if new image is provided
+                if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = 'uploads/';
+                    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    $maxSize = 2 * 1024 * 1024; // 2MB
+
+                    $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file($fileInfo, $_FILES['image']['tmp_name']);
+                    finfo_close($fileInfo);
+
+                    if (in_array($mimeType, $allowedTypes) && $_FILES['image']['size'] <= $maxSize) {
+                        $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                        $filename = uniqid('chargepoint_') . '.' . $extension;
+                        $destination = $uploadDir . $filename;
+
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                            $imagePath = $destination;
+                        } else {
+                            $view->error = "Failed to upload image.";
+                            $chargePoint = $homeowner->getChargePointById($pointID, $userID);
+                            $view->chargePoint = $chargePoint;
+                            require_once('Views/Homeowner/edit.phtml');
+                            exit;
+                        }
                     } else {
-                        $formData['image_path'] = $uploadResult['path'];
+                        $view->error = "Invalid file type or size (max 2MB allowed).";
+                        $chargePoint = $homeowner->getChargePointById($pointID, $userID);
+                        $view->chargePoint = $chargePoint;
+                        require_once('Views/Homeowner/edit.phtml');
+                        exit;
                     }
                 }
 
-                $response = $homeowner->editPoint($pointID, $userID, $formData);
+                // Prepare form data including image path
+                $formData = [
+                    'address' => trim($_POST['address']),
+                    'postcode' => trim($_POST['postcode']),
+                    'latitude' => (float) $_POST['latitude'],
+                    'longitude' => (float) $_POST['longitude'],
+                    'price' => (float) $_POST['price'],
+                    'availability' => $_POST['availability'] ?? 'Available',
+                    'image_path' => $imagePath
+                ];
 
+                // Update in DB
+                $response = $homeowner->editPoint($pointID, $userID, $formData);
                 if (isset($response['success'])) {
                     $_SESSION['success'] = $response['success'];
-                    header('Location: Mangement.php'); 
+                    header('Location: Mangement.php');
                     exit;
                 } else {
                     $view->error = $response['error'];
@@ -151,6 +180,7 @@ if (isset($_SESSION['user_role'])) {
                     exit;
                 }
             }
+
             
             // Add new charge point
             if (isset($_POST['submit'])) {
