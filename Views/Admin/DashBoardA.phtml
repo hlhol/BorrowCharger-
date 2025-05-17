@@ -9,11 +9,14 @@
 
 
 
-<div id="layoutSidenav_content">
     <main class="container-fluid px-4">
         <h1 class="mt-4">Dashboard</h1>
         <p class="mb-4 text-muted">Welcome! Here's an overview of your platform's recent activity.</p>
 
+            <form method="post" action="generateReport.php">
+                <button type="submit" class="btn btn-outline-primary mt-4">Generate System Report</button>
+            </form>
+            <br>
         <!-- Summary Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
