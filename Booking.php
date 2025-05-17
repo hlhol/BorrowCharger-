@@ -9,12 +9,18 @@ require_once 'Models/cpModel.php';
 
 $view = new stdClass();
 $view->pageTitle = 'Booking';
+$database = new Database();
+$conn = $database->connect();
+$user = new UserData($conn);
+$id = $user->getIdByName(  $_SESSION['username']);
 
 //AJAX filtering section (used by searchFilter.js)
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'filter') {
     $database = new Database();
     $conn = $database->connect();
     $chargePoint = new ChargePointData($conn);
+    
+    
 
     $filters = [
         'search' => $_GET['search'] ?? null,
@@ -113,7 +119,7 @@ if (isset($_GET['view']) && $_GET['view'] === 'contactForm' && isset($_GET['poin
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
     // Validate user session
 
-    $userId = $_SESSION['user_id'];
+    $userId = $id;
 
     // Validate POST data
     if (!isset($_POST['point_id'], $_POST['bookingdate'], $_POST['starttime'], $_POST['endtime'], $_POST['totalPrice'])) {

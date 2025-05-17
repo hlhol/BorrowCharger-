@@ -3,12 +3,18 @@
 session_start();
 require_once 'Models/Database.php';
 require_once 'Models/MessageData.php';
+require_once 'Models/UserData.php';
+
 
 $database = new Database();
 $view = new stdClass();
 $view->pageTitle = 'Dahsboard';
 $conn = $database->connect();
 $messageModel = new MessageData($conn);
+$usr = new UserData($conn);
+
+$id = $usr->getIdByName(  $_SESSION['username']);
+
 
 // Handle message submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['point_id'])) {
@@ -58,8 +64,8 @@ try {
 }
 
 // Viewing messages (for homeowners)
-if (isset($_SESSION['user_id']) && (!isset($_GET['action']) || $_GET['action'] === 'messages')) {
-    $homeownerId = (int)$_SESSION['user_id'];
+if ( (!isset($_GET['action']) || $_GET['action'] === 'messages')) { 
+    $homeownerId = $id; 
     
     // Pagination setup
     $currentPage = max(1, (int)($_GET['page'] ?? 1));
