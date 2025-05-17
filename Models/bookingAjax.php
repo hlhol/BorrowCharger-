@@ -1,12 +1,12 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/BookingData.php'; // <- Change to your Booking model
+require_once __DIR__ . '/ChargePointData.php';
 
 try {
     $database = new Database();
     $conn = $database->connect(); 
-    $booking = new BookingData($conn); // Assuming you have this
+    $chargePoint = new ChargePointData($conn);
 
     $filters = [
         'search' => $_GET['search'] ?? null,
@@ -14,7 +14,7 @@ try {
         'maxPrice' => isset($_GET['maxPrice']) ? (float)$_GET['maxPrice'] : null
     ];
 
-    $results = $booking->fetchFiltered($filters); // <- Similar to fetchFiltered()
+    $results = $chargePoint->fetchFiltered($filters);
 
     echo json_encode(array_map(function($item) {
         return [

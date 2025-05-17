@@ -81,8 +81,130 @@ if (!empty($price_range) && str_contains($price_range, '-')) {
 if (!empty($search)) {
     $filteredPoints = array_filter($filteredPoints, function ($point) use ($search) {
         return stripos($point->getAddress(), $search) !== false ||
-               stripos($point->getPostcode(), $search) !== false;
+               stripos($point->getPostcode(), $search) !== false ||
+               stripos((string)$point->getLatitude(), $search) !== false ||
+               stripos((string)$point->getLongitude(), $search) !== false;
     });
+}
+//Contact Form with homeowner email logic
+if (isset($_GET['view']) && $_GET['view'] === 'contactForm' && isset($_GET['point_id'])) {
+    $pointId = (int)$_GET['point_id'];
+
+    $database = new Database();
+    $conn = $database->connect();
+    $chargePoint = new ChargePointData($conn);
+
+    $homeownerId = $chargePoint->getHomeownerIdByPointId($pointId);
+
+    if (!$homeownerId) {
+        die('Invalid charge point.');
+    }
+
+    $stmt = $conn->prepare("SELECT email FROM Users WHERE user_id = ?");
+    $stmt->execute([$homeownerId]);
+    $owner = $stmt->fetch(PDO::FETCH_ASSOC);
+    $view->homeownerEmail = $owner['email'] ?? 'notfound@example.com';
+    $view->pointId = $pointId;
+
+    require 'Views/RentalUser/ContactH.phtml';
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
+    // Validate user session
+
+    $userId = $_SESSION['user_id'];
+
+    // Validate POST data
+    if (!isset($_POST['point_id'], $_POST['bookingdate'], $_POST['starttime'], $_POST['endtime'], $_POST['totalPrice'])) {
+        die('Incomplete booking data.');
+    }
+
+    $pointId = (int)$_POST['point_id'];
+    $bookingDate = $_POST['bookingdate'];
+    $startTime = $_POST['starttime'];
+    $endTime = $_POST['endtime'];
+    $totalPrice = (float)$_POST['totalPrice'];
+
+    // Combine date and time
+    $startDateTime = $bookingDate . ' ' . $startTime;
+    $endDateTime = $bookingDate . ' ' . $endTime;
+
+    // Validate time logic
+    $start = new DateTime($startDateTime);
+    $end = new DateTime($endDateTime);
+
+    if ($end <= $start) {
+        die('End time must be after start time.');
+    }
+
+    $duration = $start->diff($end)->h + ($start->diff($end)->i / 60);
+
+    // Insert into DB
+    $db = new Database();
+    $conn = $db->connect();
+    $bookingData = new BookingData($conn);
+
+    $result = $bookingData->createBooking($userId, $pointId, [
+        'startDateTime' => $startDateTime,
+        'endDateTime' => $endDateTime,
+        'durationHours' => $duration,
+        'totalPrice' => $totalPrice
+    ]);
+
+    if ($result) {
+        header("Location: Booking.php?success=1");
+        exit();
+    } else {
+        header("Location: Booking.php?error=1");
+        exit();
+    }
+}
+
+
+// booking data
+if (isset($_GET['action']) && $_GET['action'] === 'getBookedTimes' && isset($_GET['point_id'], $_GET['date'])) {
+    // Prevent mixed content
+    ob_clean();
+    
+    try {
+        $pointId = (int)$_GET['point_id'];
+        $date = $_GET['date'];
+        
+        $db = new Database();
+        $conn = $db->connect();
+        $bookingData = new BookingData($conn);
+        
+        $bookings = $bookingData->getBookedTimes($pointId, $date);
+        
+        if (!is_array($bookings)) {
+            throw new Exception("Invalid bookings data received");
+        }
+        
+        $bookedTimes = [];
+        foreach ($bookings as $booking) {
+            $start = $booking['start_time'];
+            $end = $booking['end_time'];
+            
+            $current = $start;
+            while ($current < $end) {
+                $bookedTimes[] = $current;
+                $currentTime = new DateTime($current);
+                $currentTime->add(new DateInterval('PT30M'));
+                $current = $currentTime->format('H:i');
+            }
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(array_unique($bookedTimes));
+        exit();
+        
+    } catch (Exception $e) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => $e->getMessage()]);
+        exit();
+    }
 }
 
 require_once('Views/RentalUser/Booking.phtml');

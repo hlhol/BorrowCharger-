@@ -50,6 +50,7 @@
                             <li class="nav-item"><a class="nav-link" href="DashBoard.php">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="Mangement.php">Manage Chargers</a></li>
                             <li class="nav-item"><a class="nav-link" href="Profile.php">Profile</a></li>
+                            <li class="nav-item"><a class="nav-link" href="Message.php">Message</a></li>
                         <?php elseif ($_SESSION['user_role'] === 'Homeowner' && ($_SESSION['AcStatus'] === 'Pending' ||$_SESSION['AcStatus'] === 'Suspended') ): ?>
                             <li class="nav-item"><a class="nav-link" href="pendAnd.php">Home</a></li>
                         <?php elseif ($_SESSION['user_role'] === 'User' && ($_SESSION['AcStatus'] === 'Pending' ||$_SESSION['AcStatus'] === 'Suspended') ): ?>

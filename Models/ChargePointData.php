@@ -261,4 +261,12 @@ public function searchAddresses(string $searchTerm): array
 }
 
 
+public function getHomeownerIdByPointId($pointId) {
+    $stmt = $this->conn->prepare("SELECT user_id FROM charge_points WHERE point_id = ?");
+    $stmt->execute([$pointId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? $row['user_id'] : null;
+}
+
+
 }

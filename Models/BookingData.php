@@ -6,6 +6,7 @@ require_once 'Models/ChargePointData.php';
 class BookingData {
     private $conn;
 
+    // Constructor receives a PDO connection object
     public function __construct(PDO $conn) {
         $this->conn = $conn;
     }
@@ -21,7 +22,7 @@ class BookingData {
         if (!$user || $user['role'] !== 'Admin') {
             return ['error' => 'Unauthorized: Only Admins can access booking statistics.'];
         }
-
+        // Fetch top 3 charge points with the most bookings
         // get data
         $sql = "
             SELECT 
@@ -115,35 +116,32 @@ class BookingData {
     $stmt = $this->conn->prepare("SELECT COUNT(*) FROM bookings WHERE status = 'Pending'");
     $stmt->execute();
     return (int)$stmt->fetchColumn();
-    }
+    }   
 
 
-    
-   public function createBooking(int $userId, int $pointId, array $data): bool {
-    try {
-        $stmt = $this->conn->prepare("
-            INSERT INTO bookings 
-            (user_id, point_id, start_datetime, end_datetime, status, duration_hours, total_price, created_at)
-            VALUES (?, ?, ?, ?,'Pending', ?, ?, NOW())
-        ");
-        
-        $status = 'Pending'; // Fixed status
-        
-        return $stmt->execute([
-            $userId,
-            $pointId,
-            $data['startDateTime'],
-            $data['endDateTime'],
-            $status,
-            $data['durationHours'],
-            $data['totalPrice'],
-            
-        ]);
-        
-    } catch (Exception $ex) {
-        error_log("Database error: " . $ex->getMessage());
-        return false;
-    }
+    //create new booking for a user by these parmeters 
+public function createBooking($userId, $pointId, $data) {
+    $sql = "INSERT INTO Bookings 
+            (user_id, point_id, start_datetime, end_datetime, duration_hours, total_price) 
+            VALUES 
+            (:user_id, :point_id, :start_datetime, :end_datetime, :duration_hours, :total_price)";
+
+    $stmt = $this->conn->prepare($sql);
+
+   $success = $stmt->execute([
+    ':user_id' => $userId,
+    ':point_id' => $pointId,
+    ':start_datetime' => $data['startDateTime'],
+    ':end_datetime' => $data['endDateTime'],
+    ':duration_hours' => $data['durationHours'],
+    ':total_price' => $data['totalPrice']
+]);
+
+if (!$success) {
+    error_log("Booking insert failed: " . print_r($stmt->errorInfo(), true));
+}
+
+return $success;
 }
     public function getMonthlyBookingStats(): array {
     $stmt = $this->conn->prepare("
@@ -156,6 +154,32 @@ class BookingData {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    
+    // get from the database the booked times 
+   public function getBookedTimes($pointId, $date) {
+    $stmt = $this->conn->prepare("
+        SELECT TIME_FORMAT(start_datetime, '%H:%i') as start_time, 
+               TIME_FORMAT(end_datetime, '%H:%i') as end_time
+        FROM Bookings
+        WHERE point_id = ? 
+        AND DATE(start_datetime) = ?
+        AND status IN ('Approved', 'Pending')
+    ");
+    
+    if (!$stmt->execute([$pointId, $date])) {
+        error_log("Database error: " . implode(" ", $stmt->errorInfo()));
+        return [];
+    }
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+   public function add30Minutes($time) {
+    $date = new DateTime($time);
+    $date->add(new DateInterval('PT30M'));
+    return $date->format('H:i');
+}
     
 
 }
