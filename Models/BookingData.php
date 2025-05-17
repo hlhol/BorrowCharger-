@@ -47,7 +47,11 @@ class BookingData {
 
 
     
-    public function getAllBookingByUser(int $userId, int $limit = 10, int $offset = 0): array {
+    public function getAllBookingByUser(int $userId, int $limit = 10, int $offset = 0, String $role): array {
+        if ($role != "Homeowner"){
+            return 0;
+        };
+        
         $sql = "SELECT * FROM Bookings WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
         $stm = $this->conn->prepare($sql);
         $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -58,7 +62,11 @@ class BookingData {
         return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function countBookingsByUser(int $userId): int {
+    public function countBookingsByUser(int $userId, String $role): int {
+        if ($role != "Homeowner"){
+            return 0;
+        };
+        
         $sql = "SELECT COUNT(*) FROM Bookings WHERE user_id = :userId";
         $stm = $this->conn->prepare($sql);
         $stm->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -67,26 +75,36 @@ class BookingData {
         return (int)$stm->fetchColumn();
     }
 
-    public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
-    $stmt = $this->conn->prepare(
-        "SELECT b.*, u.username AS booked_by, cp.address 
-         FROM Bookings b
-         INNER JOIN charge_points cp ON b.point_id = cp.point_id
-         INNER JOIN Users u ON b.user_id = u.user_id
-         WHERE cp.user_id = ?
-         ORDER BY b.created_at DESC
-         LIMIT ? OFFSET ?"
-    );
-    
-    $stmt->bindValue(1, $ownerId, PDO::PARAM_INT);
-    $stmt->bindValue(2, $limit, PDO::PARAM_INT);
-    $stmt->bindValue(3, $offset, PDO::PARAM_INT);
-    
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+    public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0, $role): array {
+        
+        if ($role != "Homeowner"){
+            return 0;
+        };
+        
+        $stmt = $this->conn->prepare(
+            "SELECT b.*, u.username AS booked_by, cp.address 
+             FROM Bookings b
+             INNER JOIN charge_points cp ON b.point_id = cp.point_id
+             INNER JOIN Users u ON b.user_id = u.user_id
+             WHERE cp.user_id = ?
+             ORDER BY b.created_at DESC
+             LIMIT ? OFFSET ?"
+        );
 
-    public function updateStatus(int $bookingId, int $ownerId, string $status): bool {
+        $stmt->bindValue(1, $ownerId, PDO::PARAM_INT);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateStatus(int $bookingId, int $ownerId, string $status, $role): bool {
+        
+        if ($role != "Homeowner"){
+            return 0;
+        };
+        
         $stmt = $this->conn->prepare(
             "UPDATE Bookings b
              JOIN charge_points cp ON b.point_id = cp.point_id

@@ -22,8 +22,8 @@ if (isset($_SESSION['user_role'])) {
         $limit = 10;
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $offset = ($page - 1) * $limit;
-        $view->BookingReq = $BookingData->getAllBookingByUser($userId, $limit, $offset);
-        $totalBookings = $BookingData->countBookingsByUser($userId);
+        $view->BookingReq = $BookingData->getAllBookingByUser($userId, $limit, $offset,  $_SESSION['user_role']);
+        $totalBookings = $BookingData->countBookingsByUser($userId,  $_SESSION['user_role']);
         $view->currentPage = $page;
         $view->totalPages = ceil($totalBookings / $limit);
 
