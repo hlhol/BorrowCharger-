@@ -129,7 +129,7 @@ if (isset($_SESSION['user_role'])) {
                 ];
 
                 if (!empty($_FILES['image']['name'])) {
-                    $uploadResult = handleImageUpload($_FILES['image']);
+                    $uploadResult = $homeowner->handleImageUpload($_FILES['image']);
                     if (isset($uploadResult['error'])) {
                         $view->error = $uploadResult['error'];
                     } else {

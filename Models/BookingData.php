@@ -75,11 +75,7 @@ class BookingData {
         return (int)$stm->fetchColumn();
     }
 
-    public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0, $role): array {
-        
-        if ($role != "Homeowner"){
-            return 0;
-        };
+    public function getByOwner(int $ownerId, int $limit = 5, int $offset = 0): array {
         
         $stmt = $this->conn->prepare(
             "SELECT b.*, u.username AS booked_by, cp.address 

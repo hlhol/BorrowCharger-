@@ -124,4 +124,6 @@ class HomeOwner {
         }
         return $this->bookingData->updateStatus($bookingID, $ownerID, 'Declined', $_SESSION['user_role']);
     }
+    
+    
 }
